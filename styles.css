@@ -286,6 +286,39 @@ img{ max-width:100%; display:block; }
 @keyframes stamp-in{ to{ opacity:0.9; transform:rotate(-8deg) scale(1); } }
 @keyframes row-in{ to{ opacity:1; transform:translateX(0); } }
 
+/* ==================== 3D floating logo ==================== */
+.logo-3d{
+  position:relative;
+  width:100%;
+  height:380px;
+  border-radius:8px;
+  overflow:hidden;
+  background:radial-gradient(ellipse at 50% 55%, #1a2230 0%, #0c1118 70%, #0a0e14 100%);
+  cursor:grab;
+  user-select:none;
+}
+.logo-3d:active{ cursor:grabbing; }
+.logo-3d canvas{ display:block; width:100%; height:100%; }
+.logo-3d-hint{
+  position:absolute; left:14px; bottom:12px;
+  font-family:var(--font-mono); font-size:.66rem;
+  color:rgba(255,255,255,0.5); letter-spacing:.06em;
+  text-transform:uppercase; pointer-events:none;
+  user-select:none;
+}
+.logo-3d-hint::before{ content:"▸ "; color:var(--signal); }
+.logo-3d-fallback{
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+}
+.logo-3d-fallback img{
+  width:60%; max-width:240px; height:auto;
+  filter:drop-shadow(0 12px 32px rgba(43,158,255,0.35));
+}
+@media (prefers-reduced-motion: reduce){
+  /* Three.js will skip animation init; we just hide the canvas mount if anything ever renders. */
+}
+
 /* ==================== Bento / cards ==================== */
 .bento{
   display:grid;
