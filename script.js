@@ -28,6 +28,72 @@ function canUse3D() {
   return !reduceMotion && typeof window.THREE === 'object' && logoMount;
 }
 
+function initSectionSnap() {
+  const mobileQuery = window.matchMedia('(max-width: 900px), (pointer: coarse)');
+  if (mobileQuery.matches) return;
+
+  const sections = Array.from(document.querySelectorAll('section'));
+  if (sections.length < 2) return;
+
+  let isSnapping = false;
+  let lastWheelTime = 0;
+
+  const getTargetTop = (index) => {
+    const section = sections[index];
+    if (!section) return window.scrollY;
+    const navOffset = 76;
+    const rectTop = section.getBoundingClientRect().top + window.scrollY;
+    return Math.max(0, rectTop - navOffset);
+  };
+
+  const snapToSection = (direction) => {
+    if (isSnapping) return;
+
+    const currentIndex = sections.reduce((closestIndex, section, index) => {
+      const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+      const currentDistance = Math.abs(sectionTop - window.scrollY - 80);
+      const closestDistance = Math.abs(sections[closestIndex].getBoundingClientRect().top + window.scrollY - window.scrollY - 80);
+      return currentDistance < closestDistance ? index : closestIndex;
+    }, 0);
+
+    const nextIndex = Math.max(0, Math.min(sections.length - 1, currentIndex + direction));
+    if (nextIndex === currentIndex) return;
+
+    isSnapping = true;
+    window.scrollTo({ top: getTargetTop(nextIndex), behavior: 'smooth' });
+    window.setTimeout(() => { isSnapping = false; }, 650);
+  };
+
+  window.addEventListener('wheel', (event) => {
+    if (event.ctrlKey || event.metaKey || event.altKey || isSnapping) return;
+    const now = window.performance.now();
+    if (now - lastWheelTime < 120) return;
+    lastWheelTime = now;
+
+    const delta = event.deltaY;
+    if (Math.abs(delta) < 30) return;
+
+    event.preventDefault();
+    snapToSection(delta > 0 ? 1 : -1);
+  }, { passive: false });
+
+  window.addEventListener('keydown', (event) => {
+    const target = event.target;
+    const isTyping = target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName);
+    if (isTyping) return;
+
+    if (event.key === 'ArrowDown' || event.key === 'PageDown' || event.key === ' ') {
+      event.preventDefault();
+      snapToSection(1);
+    } else if (event.key === 'ArrowUp' || event.key === 'PageUp') {
+      event.preventDefault();
+      snapToSection(-1);
+    }
+  });
+}
+
+initSectionSnap();
+
 function buildLogoScene() {
   if (!logoMount) return;
   const THREE = window.THREE;
