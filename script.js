@@ -28,6 +28,72 @@ function canUse3D() {
   return !reduceMotion && typeof window.THREE === 'object' && logoMount;
 }
 
+function initSectionSnap() {
+  const mobileQuery = window.matchMedia('(max-width: 900px), (pointer: coarse)');
+  if (mobileQuery.matches) return;
+
+  const sections = Array.from(document.querySelectorAll('section'));
+  if (sections.length < 2) return;
+
+  let isSnapping = false;
+  let lastWheelTime = 0;
+
+  const getTargetTop = (index) => {
+    const section = sections[index];
+    if (!section) return window.scrollY;
+    const navOffset = 76;
+    const rectTop = section.getBoundingClientRect().top + window.scrollY;
+    return Math.max(0, rectTop - navOffset);
+  };
+
+  const snapToSection = (direction) => {
+    if (isSnapping) return;
+
+    const currentIndex = sections.reduce((closestIndex, section, index) => {
+      const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+      const currentDistance = Math.abs(sectionTop - window.scrollY - 80);
+      const closestDistance = Math.abs(sections[closestIndex].getBoundingClientRect().top + window.scrollY - window.scrollY - 80);
+      return currentDistance < closestDistance ? index : closestIndex;
+    }, 0);
+
+    const nextIndex = Math.max(0, Math.min(sections.length - 1, currentIndex + direction));
+    if (nextIndex === currentIndex) return;
+
+    isSnapping = true;
+    window.scrollTo({ top: getTargetTop(nextIndex), behavior: 'smooth' });
+    window.setTimeout(() => { isSnapping = false; }, 650);
+  };
+
+  window.addEventListener('wheel', (event) => {
+    if (event.ctrlKey || event.metaKey || event.altKey || isSnapping) return;
+    const now = window.performance.now();
+    if (now - lastWheelTime < 120) return;
+    lastWheelTime = now;
+
+    const delta = event.deltaY;
+    if (Math.abs(delta) < 30) return;
+
+    event.preventDefault();
+    snapToSection(delta > 0 ? 1 : -1);
+  }, { passive: false });
+
+  window.addEventListener('keydown', (event) => {
+    const target = event.target;
+    const isTyping = target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName);
+    if (isTyping) return;
+
+    if (event.key === 'ArrowDown' || event.key === 'PageDown' || event.key === ' ') {
+      event.preventDefault();
+      snapToSection(1);
+    } else if (event.key === 'ArrowUp' || event.key === 'PageUp') {
+      event.preventDefault();
+      snapToSection(-1);
+    }
+  });
+}
+
+initSectionSnap();
+
 function buildLogoScene() {
   if (!logoMount) return;
   const THREE = window.THREE;
@@ -85,25 +151,10 @@ function buildLogoScene() {
   scene.add(halo);
 
   /* ---- logo as a textured plane ---- */
-  const loader = new THREE.TextureLoader();
-  const logoTex = loader.load(
-    'assets/logo_512.png',
-    (tex) => {
-      tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
-      tex.colorSpace = THREE.SRGBColorSpace;
-    },
-    undefined,
-    (err) => {
-      console.warn('[hero] logo texture failed:', err);
-      showFallback('texture load failed');
-    }
-  );
-  logoTex.minFilter = THREE.LinearFilter;
-
-  // Plane size roughly matches the aspect of a square logo.
-  const planeGeom = new THREE.PlaneGeometry(2.4, 2.4);
+  // Load the logo onto a canvas first so we can fix low-contrast
+  // (near-black) text before it becomes a texture.
+  const planeGeom = new THREE.PlaneGeometry(3.4, 3.4);
   const planeMat = new THREE.MeshStandardMaterial({
-    map: logoTex,
     transparent: true,
     alphaTest: 0.02,
     roughness: 0.4,
@@ -112,6 +163,42 @@ function buildLogoScene() {
   });
   const plane = new THREE.Mesh(planeGeom, planeMat);
   scene.add(plane);
+
+  const rawImg = new Image();
+  rawImg.crossOrigin = 'anonymous';
+  rawImg.onload = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = rawImg.width;
+    canvas.height = rawImg.height;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(rawImg, 0, 0);
+
+    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const d = imgData.data;
+    for (let i = 0; i < d.length; i += 4) {
+      const a = d[i + 3];
+      if (a === 0) continue;
+      const brightness = (d[i] + d[i + 1] + d[i + 2]) / 3;
+      // Near-black pixels are the wordmark text — lift them to paper color.
+      if (brightness < 70) {
+        d[i] = 244; d[i + 1] = 241; d[i + 2] = 232; // var(--paper)
+      }
+    }
+    ctx.putImageData(imgData, 0, 0);
+
+    const logoTex = new THREE.CanvasTexture(canvas);
+    logoTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    logoTex.colorSpace = THREE.SRGBColorSpace;
+    logoTex.minFilter = THREE.LinearFilter;
+    logoTex.needsUpdate = true;
+    planeMat.map = logoTex;
+    planeMat.needsUpdate = true;
+  };
+  rawImg.onerror = (err) => {
+    console.warn('[hero] logo texture failed:', err);
+    showFallback('texture load failed');
+  };
+  rawImg.src = 'assets/logo_512.png';
 
   // Slight tilt so it doesn't read dead-on
   plane.rotation.x = -0.05;
