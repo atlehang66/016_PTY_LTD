@@ -30,6 +30,7 @@ const EMAILJS_TEMPLATE_ID = "template_elvlcgv";
 const contactForm = document.getElementById('contact-form');
 const statusEl    = document.getElementById('cf-status');
 const submitBtn   = document.getElementById('cf-submit');
+let successGlowTimer = null;
 
 if (contactForm) {
   contactForm.addEventListener('submit', function (e) {
@@ -42,11 +43,15 @@ if (contactForm) {
       EMAILJS_TEMPLATE_ID.startsWith("YOUR_");
 
     if (notConfigured) {
+      if (successGlowTimer) clearTimeout(successGlowTimer);
+      contactForm.classList.remove('is-success');
       statusEl.textContent = "Form isn't wired up yet — email hello@yourdomain.com directly.";
       statusEl.classList.add('is-error');
       return;
     }
 
+    if (successGlowTimer) clearTimeout(successGlowTimer);
+    contactForm.classList.remove('is-success');
     submitBtn.disabled = true;
     submitBtn.textContent = 'Sending…';
     statusEl.textContent = '';
@@ -57,10 +62,17 @@ if (contactForm) {
         contactForm.reset();
         submitBtn.textContent = 'Send it over';
         submitBtn.disabled = false;
-        statusEl.textContent = 'Cleared — message sent. We\u2019ll reply soon.';
+        statusEl.textContent = 'Cleared — message sent. We’ll reply soon.';
+        statusEl.classList.remove('is-error');
+        contactForm.classList.add('is-success');
+        successGlowTimer = window.setTimeout(() => {
+          contactForm.classList.remove('is-success');
+        }, 3000);
       })
       .catch(function (err) {
         console.error('EmailJS error:', err);
+        if (successGlowTimer) clearTimeout(successGlowTimer);
+        contactForm.classList.remove('is-success');
         submitBtn.textContent = 'Send it over';
         submitBtn.disabled = false;
         statusEl.textContent = "That didn't go through — email hello@yourdomain.com directly.";
