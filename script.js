@@ -41,7 +41,7 @@ function initSectionSnap() {
   const getTargetTop = (index) => {
     const section = sections[index];
     if (!section) return window.scrollY;
-    const navOffset = 76;
+    const navOffset = 112;
     const rectTop = section.getBoundingClientRect().top + window.scrollY;
     return Math.max(0, rectTop - navOffset);
   };
@@ -118,16 +118,16 @@ function buildLogoScene() {
   renderer.setClearColor(0x000000, 0);
   logoMount.appendChild(renderer.domElement);
 
-  /* ---- lights: key + cool fill to read the logo's blue/violet tones ---- */
+  /* ---- lights: key + warm fill to read the logo's coral/amber tones ---- */
   const ambient = new THREE.AmbientLight(0xffffff, 0.6);
   scene.add(ambient);
   const key = new THREE.DirectionalLight(0xfff2d6, 0.9);
   key.position.set(2, 3, 4);
   scene.add(key);
-  const fill = new THREE.DirectionalLight(0x6fb2ff, 0.5);
+  const fill = new THREE.DirectionalLight(0xffb46f, 0.5);
   fill.position.set(-3, 1, 2);
   scene.add(fill);
-  const rim = new THREE.DirectionalLight(0x8a5cf6, 0.4);
+  const rim = new THREE.DirectionalLight(0xff6b4a, 0.4);
   rim.position.set(0, -2, -3);
   scene.add(rim);
 
@@ -136,9 +136,9 @@ function buildLogoScene() {
   haloCanvas.width = haloCanvas.height = 256;
   const hctx = haloCanvas.getContext('2d');
   const grd = hctx.createRadialGradient(128, 128, 8, 128, 128, 128);
-  grd.addColorStop(0.0, 'rgba(140, 120, 255, 0.85)');
-  grd.addColorStop(0.35, 'rgba(43, 158, 255, 0.45)');
-  grd.addColorStop(0.75, 'rgba(43, 158, 255, 0.0)');
+  grd.addColorStop(0.0, 'rgba(255, 107, 74, 0.85)');
+  grd.addColorStop(0.35, 'rgba(255, 193, 104, 0.45)');
+  grd.addColorStop(0.75, 'rgba(255, 193, 104, 0.0)');
   hctx.fillStyle = grd;
   hctx.fillRect(0, 0, 256, 256);
   const haloTex = new THREE.CanvasTexture(haloCanvas);
@@ -179,9 +179,9 @@ function buildLogoScene() {
       const a = d[i + 3];
       if (a === 0) continue;
       const brightness = (d[i] + d[i + 1] + d[i + 2]) / 3;
-      // Near-black pixels are the wordmark text — lift them to paper color.
+      // Near-black pixels are the wordmark text — lift them to the theme's text color.
       if (brightness < 70) {
-        d[i] = 244; d[i + 1] = 241; d[i + 2] = 232; // var(--paper)
+        d[i] = 248; d[i + 1] = 243; d[i + 2] = 236; // var(--text)
       }
     }
     ctx.putImageData(imgData, 0, 0);
@@ -214,7 +214,7 @@ function buildLogoScene() {
   }
   dustGeom.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
   const dustMat = new THREE.PointsMaterial({
-    color: 0x8a5cf6, size: 0.025, transparent: true, opacity: 0.55,
+    color: 0xffb46f, size: 0.025, transparent: true, opacity: 0.55,
     blending: THREE.AdditiveBlending, depthWrite: false,
   });
   const dust = new THREE.Points(dustGeom, dustMat);
@@ -341,3 +341,135 @@ if (canUse3D()) {
 } else {
   showFallback(reduceMotion ? 'reduced motion' : 'no WebGL/Three.js');
 }
+
+/* ============================================================
+   Scroll reveal — fades/slides sections and cards in as they
+   enter the viewport. Respects prefers-reduced-motion (handled
+   in CSS: .reveal is visible by default when motion is reduced).
+   ============================================================ */
+(function initScrollReveal() {
+  const revealEls = document.querySelectorAll('.reveal');
+  if (!revealEls.length) return;
+
+  if (reduceMotion || !('IntersectionObserver' in window)) {
+    revealEls.forEach((el) => el.classList.add('is-visible'));
+    return;
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.15, rootMargin: '0px 0px -40px 0px' }
+  );
+
+  revealEls.forEach((el) => observer.observe(el));
+})();
+
+/* ============================================================
+   Capability bars — set the fill width from data-level once
+   the row scrolls into view (width transition does the rest).
+   ============================================================ */
+(function initCapabilityBars() {
+  document.querySelectorAll('.cap-fill').forEach((fill) => {
+    const level = fill.getAttribute('data-level') || '0';
+    fill.style.setProperty('--w', level + '%');
+  });
+})();
+
+/* ============================================================
+   Card tilt — subtle pointer-following tilt + glow on service
+   cards. Skipped on touch devices and reduced-motion.
+   ============================================================ */
+(function initCardTilt() {
+  if (reduceMotion || window.matchMedia('(pointer: coarse)').matches) return;
+  const cards = document.querySelectorAll('.tilt');
+  cards.forEach((card) => {
+    const onMove = (e) => {
+      const r = card.getBoundingClientRect();
+      const x = e.clientX - r.left;
+      const y = e.clientY - r.top;
+      const px = x / r.width;
+      const py = y / r.height;
+      const rotX = (0.5 - py) * 6;
+      const rotY = (px - 0.5) * 6;
+      card.style.transform = `perspective(800px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-3px)`;
+      card.style.setProperty('--mx', `${px * 100}%`);
+      card.style.setProperty('--my', `${py * 100}%`);
+    };
+    const onLeave = () => {
+      card.style.transform = '';
+    };
+    card.addEventListener('mousemove', onMove);
+    card.addEventListener('mouseleave', onLeave);
+  });
+})();
+
+/* ============================================================
+   Project-type segmented control — iOS-style sliding thumb,
+   feeds a hidden input so the choice travels with the rest of
+   the booking form to EmailJS.
+   ============================================================ */
+(function initSegmentedControl() {
+  const group = document.getElementById('cf-project-type');
+  const hidden = document.getElementById('cf-project-type-value');
+  const thumb = document.getElementById('cf-project-type-thumb');
+  if (!group || !hidden || !thumb) return;
+
+  const options = Array.from(group.querySelectorAll('.segmented-option'));
+
+  const moveThumb = (btn) => {
+    thumb.classList.add('is-active');
+    thumb.style.width = btn.offsetWidth + 'px';
+    thumb.style.transform = `translateX(${btn.offsetLeft - 4}px)`;
+  };
+
+  const select = (btn) => {
+    options.forEach((c) => c.classList.remove('is-selected'));
+    btn.classList.add('is-selected');
+    hidden.value = btn.getAttribute('data-value') || '';
+    moveThumb(btn);
+  };
+
+  group.addEventListener('click', (e) => {
+    const btn = e.target.closest('.segmented-option');
+    if (!btn) return;
+    select(btn);
+  });
+
+  window.addEventListener('resize', () => {
+    const current = group.querySelector('.segmented-option.is-selected');
+    if (current) moveThumb(current);
+  });
+})();
+
+/* ============================================================
+   Floating "Book a session" CTA — appears once the hero has
+   scrolled past, so the booking hook stays reachable throughout.
+   ============================================================ */
+(function initFloatingBookCta() {
+  const floatBtn = document.getElementById('float-book');
+  const bookSection = document.getElementById('book');
+  const hero = document.getElementById('top');
+  if (!floatBtn || !hero) return;
+
+  const toggle = () => {
+    const heroBottom = hero.getBoundingClientRect().bottom;
+    const pastHero = heroBottom < 0;
+    let inBookSection = false;
+    if (bookSection) {
+      const r = bookSection.getBoundingClientRect();
+      inBookSection = r.top < window.innerHeight * 0.6 && r.bottom > 0;
+    }
+    floatBtn.classList.toggle('is-shown', pastHero && !inBookSection);
+  };
+
+  toggle();
+  window.addEventListener('scroll', toggle, { passive: true });
+  window.addEventListener('resize', toggle);
+})();

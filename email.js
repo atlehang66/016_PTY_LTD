@@ -30,11 +30,80 @@ const EMAILJS_TEMPLATE_ID = "template_elvlcgv";
 const contactForm = document.getElementById('contact-form');
 const statusEl    = document.getElementById('cf-status');
 const submitBtn   = document.getElementById('cf-submit');
+const consultationDateInput = document.getElementById('cf-date');
 let successGlowTimer = null;
+
+function getNextAvailableDate() {
+  const today = new Date();
+  const date = new Date(today);
+  let daysAhead = 1;
+
+  while (daysAhead <= 7) {
+    date.setDate(today.getDate() + daysAhead);
+    if (date.getDay() !== 0) {
+      return date;
+    }
+    daysAhead += 1;
+  }
+
+  return date;
+}
+
+function setConsultationDateConstraints() {
+  if (!consultationDateInput) return;
+
+  const minDate = getNextAvailableDate();
+  const yyyy = minDate.getFullYear();
+  const mm = String(minDate.getMonth() + 1).padStart(2, '0');
+  const dd = String(minDate.getDate()).padStart(2, '0');
+
+  consultationDateInput.min = `${yyyy}-${mm}-${dd}`;
+  consultationDateInput.setAttribute('aria-describedby', 'cf-date-help');
+}
+
+function validateConsultationDate() {
+  if (!consultationDateInput || !consultationDateInput.value) return true;
+
+  const selectedDate = new Date(`${consultationDateInput.value}T00:00:00`);
+  const isSunday = selectedDate.getDay() === 0;
+  const isBeforeMin = selectedDate < new Date(`${consultationDateInput.min}T00:00:00`);
+
+  if (isSunday || isBeforeMin) {
+    consultationDateInput.setCustomValidity('Please choose a future weekday.');
+    return false;
+  }
+
+  consultationDateInput.setCustomValidity('');
+  return true;
+}
+
+if (consultationDateInput) {
+  setConsultationDateConstraints();
+  consultationDateInput.addEventListener('change', validateConsultationDate);
+}
 
 if (contactForm) {
   contactForm.addEventListener('submit', function (e) {
     e.preventDefault();
+
+    if (!validateConsultationDate() || !contactForm.checkValidity()) {
+      contactForm.reportValidity();
+      return;
+    }
+
+    const consultationDate = contactForm.querySelector('[name="consultation_date"]').value;
+    const consultationTime = contactForm.querySelector('[name="consultation_time"]').value;
+    const messageField = contactForm.querySelector('[name="message"]');
+    const consultationSlot = consultationDate && consultationTime
+      ? `Consultation request: ${consultationDate} at ${consultationTime}`
+      : '';
+
+    if (messageField) {
+      const existingMessage = messageField.value.trim();
+      messageField.value = existingMessage
+        ? `${existingMessage}\n\n${consultationSlot}`
+        : consultationSlot;
+    }
 
     const notConfigured =
       !window.emailjs ||
