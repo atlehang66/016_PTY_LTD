@@ -18,6 +18,7 @@
   --radius-sm:8px;
   --max-w:1180px;
   --shadow:0 22px 70px -24px rgba(0,0,0,0.55);
+  --nav-h:112px; /* fixed nav clearance, reserved inside every full-screen section */
 }
 
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }

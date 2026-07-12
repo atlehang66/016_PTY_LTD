@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@500;600;700;800&family=Big+Shoulders+Stencil:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="arch-tree.css">
 </head>
 <body class="antialiased">
 <div class="grain"></div>
@@ -52,72 +53,108 @@
 </section>
 
 <!-- SERVICES -->
-<section id="services" class="section" style="padding-top: 10px;">
+<section id="services" class="section" style="padding-top: 10px;" data-min-scale="0.8">
   <div class="section-inner">
     <div class="section-head">
       <div>
         <p class="eyebrow">AT-02 · Services</p>
-        <h2 class="h2">What we deliver, end to end</h2>
-      </div>
-      <p class="section-note">No handoffs to a different team halfway through. The people who design it are the people who ship and support it.</p>
-    </div>
-
-    <div class="bento">
-      <div class="card card-feature reveal" style="--d: 1;">
-        <div class="icon-box">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3v18M3 9h18" stroke-linecap="round"/></svg>
-        </div>
-        <h3 class="h3">Full-stack web &amp; e-commerce</h3>
-        <p class="card-text">Storefronts, checkout flows, and customer accounts — built on modern stacks and tuned for real transaction volume, not just demos.</p>
-        <div class="chip-row">
-          <span class="chip">Node.js / Express</span>
-          <span class="chip">React</span>
-          <span class="chip">Supabase / Postgres</span>
-        </div>
-      </div>
-
-      <div class="card reveal" style="--d: 2;">
-        <div class="icon-box">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18" stroke-linecap="round"/></svg>
-        </div>
-        <h3 class="h4">Payments &amp; checkout</h3>
-        <p class="card-text-sm">Gateway integrations, signature verification, webhook handling — built so a payment confirmation never gets lost.</p>
-      </div>
-
-      <div class="card reveal" style="--d: 3;">
-        <div class="icon-box">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" stroke-linecap="round"/></svg>
-        </div>
-        <h3 class="h4">Third-party integrations</h3>
-        <p class="card-text-sm">Supplier APIs, fulfillment services, and notification systems — wired together with retries and logging you can trust.</p>
-      </div>
-
-      <div class="card reveal" style="--d: 4;">
-        <div class="icon-box">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.66 3.58 3 8 3s8-1.34 8-3V6M4 12v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6"/></svg>
-        </div>
-        <h3 class="h4">Data &amp; backend architecture</h3>
-        <p class="card-text-sm">Schema design, migrations, and auth that hold up as the product grows past its first hundred users.</p>
-      </div>
-
-      <div class="card reveal" style="--d: 5;">
-        <div class="icon-box">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 6 6 1-4.5 4.5L18 20l-6-3-6 3 1.5-6.5L3 9l6-1z"/></svg>
-        </div>
-        <h3 class="h4">Ongoing support</h3>
-        <p class="card-text-sm">We stay on after launch — monitoring, fixes, and small iterations, not a one-time handoff.</p>
       </div>
     </div>
+
+      <div class="arch-stage">
+
+    <!-- Tree diagram -->
+    <div class="arch-diagram" id="archDiagram">
+
+      <!-- Root node (left column) -->
+      <div class="arch-root-col">
+        <div class="arch-node node-root" data-branch="root">
+          <div class="node-num">01 · Plan &amp; design</div>
+          <div class="node-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a4 4 0 00-5.4 5.4l-6 6a1 1 0 001.4 1.4l6-6a4 4 0 005.4-5.4l-2.1 2.1-2-2z"/></svg>
+          </div>
+          <div class="node-title">Web design</div>
+          <div class="node-text">User-focused interfaces that turn visitors into customers and keep the product clear at every step.</div>
+          <span class="node-anchor node-anchor-right"></span>
+        </div>
+      </div>
+
+      <!-- SVG connector overlay -->
+      <svg class="arch-connectors" id="archConnectors" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#5b8dff" stop-opacity="0.75" />
+            <stop offset="100%" stop-color="#2b9eff" stop-opacity="0.35" />
+          </linearGradient>
+        </defs>
+      </svg>
+
+      <!-- Branch nodes (right column) -->
+      <div class="arch-branches-col">
+        <div class="arch-node node-process" data-branch="left">
+          <span class="node-anchor node-anchor-left" style="--dot:#2b9eff"></span>
+          <div class="node-num">02 · Build &amp; automate</div>
+          <div class="node-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09A1.65 1.65 0 0015 4.6a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          </div>
+          <div class="node-title">Process automation</div>
+          <div class="node-text">Streamline workflows and remove manual friction with reliable automation.</div>
+        </div>
+
+        <div class="arch-node node-appsec" data-branch="right">
+          <span class="node-anchor node-anchor-left" style="--dot:#6ee7b7"></span>
+          <div class="node-num">03 · Secure &amp; protect</div>
+          <div class="node-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l8 4v6c0 5-3.4 8.7-8 10-4.6-1.3-8-5-8-10V6l8-4z"/></svg>
+          </div>
+          <div class="node-title">Application security</div>
+          <div class="node-text">Secure by design, with testing and hardening built into delivery.</div>
+        </div>
+
+        <div class="arch-node node-ai" data-branch="left">
+          <span class="node-anchor node-anchor-left" style="--dot:#a78bfa"></span>
+          <div class="node-num">04 · Intelligence layer</div>
+          <div class="node-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5z"/><path d="M19 15l.7 2.1L22 18l-2.3.9L19 21l-.7-2.1L16 18l2.3-.9z"/></svg>
+          </div>
+          <div class="node-title">AI agents</div>
+          <div class="node-text">Smart assistants that support your team and accelerate day-to-day operations.</div>
+        </div>
+
+        <div class="arch-node node-sysmon" data-branch="right">
+          <span class="node-anchor node-anchor-left" style="--dot:#f59e0b"></span>
+          <div class="node-num">05 · Operate &amp; optimize</div>
+          <div class="node-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M8 12h2l1.5 3L14 8l1.5 4H16"/></svg>
+          </div>
+          <div class="node-title">Systems monitoring</div>
+          <div class="node-text">Visibility, alerts, and insight so issues are surfaced before they become costly.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="arch-footer">
+      <div class="footer-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4.5 16.5L3 21l4.5-1.5L18 9a2.1 2.1 0 00-3-3L4.5 16.5z"/><path d="M15 6l3 3"/></svg>
+      </div>
+      <p class="footer-text"><strong>End-to-end by design.</strong> We align strategy, technology, and operations across the full software lifecycle.</p>
+    </div>
+
+  </div>
+
+  <script src="arch-tree.js"></script>
   </div>
 </section>
 
 <!-- PROCESS -->
-<section id="process" class="section" style="padding-top: 120px;">
+<section id="process" class="section process-section" data-min-scale="0.78">
   <div class="section-inner">
     <p class="eyebrow">AT-04 · Process</p>
     <h2 class="h2 mb-xl">Four stages, one team, all the way through</h2>
 
-    <div class="pipeline">
+    <div class="pipeline" style="margin-top: 10%;">
       <div class="pipeline-line"></div>
       <div class="pipeline-grid">
         <div class="stage">
@@ -158,7 +195,7 @@
 </section>
 
 <!-- CONTACT -->
-<section id="contact" class="section" >
+<section id= class="section" >
   <div class="contact-inner">
     <div class="eyebrow-row center"><p class="eyebrow">AT-06 · Get in touch</p></div>
     <h2 class="h1-sm">Have something to build?</h2>
