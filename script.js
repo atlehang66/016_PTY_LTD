@@ -254,3 +254,24 @@ if (canUse3D()) {
 } else {
   showFallback(reduceMotion ? 'reduced motion' : 'no WebGL/Three.js');
 }
+
+// animation que
+const reveals = document.querySelectorAll(".reveal");
+const observer = new IntersectionObserver((entries) => {
+
+    entries.forEach((entry) => {
+        console.log(entry.isIntersecting, entry.intersectionRatio);
+        if (entry.isIntersecting) {
+            entry.target.classList.add("active");
+        }
+
+    });
+
+}, {
+    threshold: 0.3
+});
+reveals.forEach((reveal) => {
+
+    observer.observe(reveal);
+
+});

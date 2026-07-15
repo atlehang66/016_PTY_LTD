@@ -57,6 +57,7 @@ html{
  }
 body{
   background:var(--ink);
+  /* background: red !important; */
   color:var(--paper);
   font-family:var(--font-body);
   line-height:1.5;
@@ -103,6 +104,19 @@ img{ max-width:100%; display:block; }
   line-height:0.98;
   letter-spacing:-0.01em;
   margin-bottom:24px;
+
+  animation: heroReveal 1s ease forwards;
+}
+/* hero - animation */
+@keyframes heroReveal{
+  from{
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to{
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 .h2{
   font-family:var(--font-display);
@@ -133,6 +147,20 @@ img{ max-width:100%; display:block; }
 .mark{
   background:linear-gradient(transparent 62%, rgba(138,92,246,0.35) 62%);
   padding:0 2px;
+  /* animation */
+  display: inline-block;
+  animation: shipReveal .4s linear backwards;
+  animation-delay: .8s;
+}
+@keyframes shipReveal{
+  from{
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to{
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .card-text-sm{ color:var(--rope); font-size:0.95rem; line-height:1.65; }
@@ -251,10 +279,25 @@ img{ max-width:100%; display:block; }
 @media (max-width:900px){ .hero-inner{ grid-template-columns:1fr; } }
 
 .hero-ctas{ 
+  animation: heroReveal 1s ease forwards;
+  animation-delay: .8s;
+  animation-fill-mode: both;
+
   justify-content:center;
   padding-top: 100px;
   padding-bottom: 50px;
  }
+ .cta-1 {
+    animation: heroReveal 0.8s ease forwards;
+    animation-delay: 0.8s;
+    opacity: 0;
+}
+
+.cta-2 {
+    animation: heroReveal 0.8s ease forwards;
+    animation-delay: 1s;
+    opacity: 0;
+}
 
 .hero-facts{  align-items:center; }
 .hero-fact{
@@ -318,7 +361,31 @@ img{ max-width:100%; display:block; }
   transition:transform .2s ease, border-color .2s ease, background-color .2s ease;
 }
 .team-card:hover{ transform:translateY(-3px); border-color:var(--rope); background-color:var(--steel-raised); }
+.reveal{
+    opacity:0;
+    transform:translateY(40px);
+}
+.reveal.active{
+    opacity:1;
+    transform:translateY(0);
 
+    transition:all 2s ease-out;
+}
+.card-1{
+  animation: heroReveal 0.8s ease forwards;
+    animation-delay: 0.8s;
+    opacity: 0;
+}
+.card-2{
+  animation: heroReveal 0.8s ease forwards;
+    animation-delay: 1.0s;
+    opacity: 0;
+}
+.card-3{
+  animation: heroReveal 0.8s ease forwards;
+    animation-delay: 1.2s;
+    opacity: 0;
+}
 .team-top{ display:flex; align-items:center; gap:16px; margin-bottom:18px; }
 .avatar{
   width:54px; height:54px; border-radius:50%; flex-shrink:0;
