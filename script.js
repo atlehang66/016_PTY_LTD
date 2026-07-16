@@ -226,52 +226,111 @@ function buildLogoScene() {
   };
   tick();
 
-  // cleanup
-  logoMount._cleanup3d = () => {
-    cancelAnimationFrame(rafId);
-    window.removeEventListener('resize', resize);
-    window.removeEventListener('mousemove', onMove);
-    window.removeEventListener('mouseup', onUp);
-    logoTex.dispose();
-    haloTex.dispose();
-    planeGeom.dispose();
-    planeMat.dispose();
-    haloMat.dispose();
-    dustGeom.dispose();
-    dustMat.dispose();
-    renderer.dispose();
-  };
-}
 
-/* ---- entry ---- */
-if (canUse3D()) {
-  try {
-    buildLogoScene();
-  } catch (err) {
-    console.warn('[hero] 3D logo failed, showing static image:', err);
-    showFallback('init error');
+
+/* ============================================================
+   Work section — thumbnail previews: scale live iframes to fill
+   their browser-chrome frame at any card width, no letterboxing.
+   These stay non-interactive (pointer-events:none in CSS); the
+   click surface is .work-frame-link, which opens the modal below.
+   ============================================================ */
+(function initWorkThumbnails() {
+  const BASE_W = 1440;
+  const viewports = document.querySelectorAll('.work-frame-viewport');
+  if (!viewports.length) return;
+ 
+  function scaleFrame(viewport) {
+    const iframe = viewport.querySelector('iframe');
+    if (!iframe) return;
+    const scale = viewport.clientWidth / BASE_W;
+    iframe.style.transform = `scale(${scale})`;
   }
-} else {
-  showFallback(reduceMotion ? 'reduced motion' : 'no WebGL/Three.js');
-}
-
-// animation que
-const reveals = document.querySelectorAll(".reveal");
-const observer = new IntersectionObserver((entries) => {
-
-    entries.forEach((entry) => {
-        console.log(entry.isIntersecting, entry.intersectionRatio);
-        if (entry.isIntersecting) {
-            entry.target.classList.add("active");
-        }
-
+ 
+  function scaleAll() {
+    viewports.forEach(scaleFrame);
+  }
+ 
+  scaleAll();
+  window.addEventListener('resize', scaleAll);
+ 
+  if ('ResizeObserver' in window) {
+    const ro = new ResizeObserver(scaleAll);
+    viewports.forEach((vp) => ro.observe(vp));
+  }
+})();
+ 
+/* ============================================================
+   Work section — interactive preview modal.
+   Opens a real, live, fully-clickable copy of the site scaled
+   down ("zoomed out") to fit the modal, so more of the page is
+   visible at once. Closes via Esc, backdrop click, or the ✕.
+   ============================================================ */
+(function initWorkModal() {
+  const modal = document.getElementById('workModal');
+  if (!modal) return;
+ 
+  const body = modal.querySelector('.work-modal-body');
+  const viewport = document.getElementById('workModalViewport');
+  const iframe = document.getElementById('workModalIframe');
+  const urlLabel = document.getElementById('workModalUrl');
+  const openLink = document.getElementById('workModalOpenLink');
+  const BASE_W = 1440;
+  const BASE_H = 900;
+  const BODY_PADDING = 48; // matches .work-modal-body padding (24px each side)
+ 
+  let lastFocused = null;
+  let isOpen = false;
+ 
+  function sizeViewport() {
+    if (!isOpen) return;
+    const availW = body.clientWidth - BODY_PADDING;
+    const availH = body.clientHeight - BODY_PADDING;
+    // Zoom out only — never scale a small site up past 100%.
+    const scale = Math.min(availW / BASE_W, availH / BASE_H, 1);
+    viewport.style.width = `${BASE_W * scale}px`;
+    viewport.style.height = `${BASE_H * scale}px`;
+    iframe.style.transform = `scale(${scale})`;
+  }
+ 
+  function openModal(url, label) {
+    lastFocused = document.activeElement;
+    urlLabel.textContent = label || url;
+    openLink.href = url;
+    iframe.src = url;
+    isOpen = true;
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    requestAnimationFrame(sizeViewport);
+    modal.querySelector('.work-modal-close').focus();
+  }
+ 
+  function closeModal() {
+    isOpen = false;
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    iframe.src = 'about:blank'; // stop whatever's running behind it
+    if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+  }
+ 
+  document.querySelectorAll('.work-frame-link[data-work-url]').forEach((trigger) => {
+    trigger.addEventListener('click', (e) => {
+      e.preventDefault();
+      openModal(trigger.dataset.workUrl, trigger.dataset.workLabel);
     });
-
-}, {
-    threshold: 0.3
-});
-reveals.forEach((reveal) => {
-
-    observer.observe(reveal);
-
-});
+  });
+ 
+  modal.querySelectorAll('[data-work-close]').forEach((el) => {
+    el.addEventListener('click', closeModal);
+  });
+ 
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isOpen) closeModal();
+  });
+ 
+  window.addEventListener('resize', sizeViewport);
+  if ('ResizeObserver' in window) {
+    new ResizeObserver(sizeViewport).observe(body);
+  }
+})();
