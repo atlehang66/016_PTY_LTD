@@ -762,3 +762,46 @@ img{ max-width:100%; display:block; }
   .work-modal-window { width:100%; height:100%; border-radius:0; }
   .work-modal-open { display:none; }
 }
+
+/* ---------- Work modal — embed blocked fallback ----------
+   Shown in place of the iframe when the hosting provider
+   refuses to be framed (X-Frame-Options / CSP). The
+   "Open Project" button reuses the existing .btn styles. */
+.work-modal-fallback {
+  display:none;
+  position:absolute; inset:24px;
+  flex-direction:column;
+  align-items:center; justify-content:center;
+  text-align:center;
+  gap:18px;
+  padding:32px 28px;
+  border:1px dashed var(--border);
+  border-radius:8px;
+  background:linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+  z-index:2;
+}
+.work-modal-fallback.is-visible { display:flex; }
+.work-modal-fallback-icon {
+  width:44px; height:44px;
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(239,35,60,0.12);
+  border:1px solid rgba(239,35,60,0.35);
+  color:var(--signal);
+  flex-shrink:0;
+}
+.work-modal-fallback-msg {
+  font-family:var(--font-mono);
+  font-size:0.85rem;
+  line-height:1.6;
+  color:var(--text);
+  max-width:420px;
+}
+.work-modal-fallback-url {
+  display:block;
+  margin-top:8px;
+  font-size:0.72rem;
+  color:var(--muted);
+  word-break:break-all;
+}
+.work-modal-fallback .btn { margin-top:4px; }
