@@ -251,59 +251,44 @@
       </div>
     </div>
  
-    <div class="work-grid">
- 
-      <article class="work-card">
-        <div class="work-frame">
-          <div class="browser-chrome">
-            <span class="chrome-dots"><i class="dot dot-r"></i><i class="dot dot-y"></i><i class="dot dot-g"></i></span>
-            <span class="browser-url">atlehang66.github.io/.com</span>
-          </div>
-          <div class="work-frame-viewport">
-            <iframe src="https://atlehang66.github.io/.com/" loading="lazy" tabindex="-1" title="Live preview of the men's fashion storefront"></iframe>
-          </div>
-          <a class="work-frame-link" href="https://atlehang66.github.io/.com/" data-work-url="https://atlehang66.github.io/.com/" data-work-label="atlehang66.github.io/.com" aria-label="Open an interactive preview of the men's fashion storefront"></a>
-        </div>
-        <div class="work-body">
-          <p class="stage-num">01 · E-commerce storefront</p>
-          <h3 class="h4">Men's fashion storefront</h3>
-          <p class="card-text-sm">A South Africa-focused storefront with a live product catalog, size-aware cart logic, and live search/filter — built from static HTML/CSS/JS with real Supabase auth underneath.</p>
-          <div class="chip-row">
-            <span class="chip">HTML / CSS / JS</span>
-            <span class="chip">Supabase Auth</span>
-            <span class="chip">Cart &amp; catalog</span>
-          </div>
-          <a href="https://atlehang66.github.io/.com/" target="_blank" rel="noopener" class="btn btn-outline btn-sm work-link">Visit live site ↗</a>
-        </div>
-      </article>
- 
-      <article class="work-card">
-        <div class="work-frame">
-          <div class="browser-chrome">
-            <span class="chrome-dots"><i class="dot dot-r"></i><i class="dot dot-y"></i><i class="dot dot-g"></i></span>
-            <span class="browser-url">pure-living-4.preview.emergentagent.com</span>
-          </div>
-          <div class="work-frame-viewport">
-            <iframe src="https://pure-living-4.preview.emergentagent.com/?utm_source=share" loading="lazy" tabindex="-1" title="Live preview of the Pure Living wellness e-commerce platform"></iframe>
-          </div>
-          <a class="work-frame-link" href="https://pure-living-4.preview.emergentagent.com/?utm_source=share" data-work-url="https://pure-living-4.preview.emergentagent.com/?utm_source=share" data-work-label="pure-living-4.preview.emergentagent.com" aria-label="Open an interactive preview of Pure Living"></a>
-        </div>
-        <div class="work-body">
-          <p class="stage-num">02 · Wellness e-commerce platform</p>
-          <h3 class="h4">Pure Living</h3>
-          <p class="card-text-sm">A full dropshipping platform for health, beauty, and sustainable living — Node/Express and Supabase on the backend, PayFast payments, and CJ Dropshipping fulfillment wired into checkout.</p>
-          <div class="chip-row">
-            <span class="chip">Node.js / Express</span>
-            <span class="chip">PayFast</span>
-            <span class="chip">CJ Dropshipping</span>
-          </div>
-          <a href="https://pure-living-4.preview.emergentagent.com/?utm_source=share" target="_blank" rel="noopener" class="btn btn-outline btn-sm work-link">Visit live site ↗</a>
-        </div>
-      </article>
- 
+    <div class="work-grid" id="workGrid">
+      <!-- Cards are rendered by script.js from the PROJECTS array. -->
     </div>
   </div>
 </section>
+
+<!-- WORK preview modal — populated by script.js.
+     Skeleton only; the interactive preview lives in the iframe,
+     and the fallback panel is shown if the host blocks embedding. -->
+<div id="workModal" class="work-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Project preview">
+  <div class="work-modal-backdrop" data-work-close></div>
+  <div class="work-modal-window">
+    <div class="browser-chrome work-modal-chrome">
+      <span class="chrome-dots"><i class="dot dot-r"></i><i class="dot dot-y"></i><i class="dot dot-g"></i></span>
+      <span class="browser-url" id="workModalUrl"></span>
+      <div class="work-modal-actions">
+        <a id="workModalOpenLink" class="work-modal-open" href="#" target="_blank" rel="noopener">Open in new tab ↗</a>
+        <button class="work-modal-close" type="button" data-work-close aria-label="Close preview">✕</button>
+      </div>
+    </div>
+    <div class="work-modal-body">
+      <div id="workModalViewport" class="work-modal-viewport">
+        <iframe id="workModalIframe" src="about:blank" loading="lazy" tabindex="-1" title="Project preview"></iframe>
+      </div>
+      <div id="workModalFallback" class="work-modal-fallback" role="status" aria-live="polite">
+        <div class="work-modal-fallback-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.86l-8.18 14.17A2 2 0 003.84 21h16.32a2 2 0 001.72-2.97L13.7 3.86a2 2 0 00-3.4 0z"/></svg>
+        </div>
+        <p class="work-modal-fallback-msg">
+          This project cannot be previewed because the hosting provider blocks embedding. You can still open it in a new tab.
+          <span class="work-modal-fallback-url" id="workModalFallbackUrl"></span>
+        </p>
+        <a id="workModalFallbackOpen" class="btn btn-primary btn-sm" href="#" target="_blank" rel="noopener">Open Project</a>
+      </div>
+    </div>
+    <p class="work-modal-hint">Click and scroll inside the preview to interact with the live site. Press <kbd>Esc</kbd> to close.</p>
+  </div>
+</div>
 <!-- STACK -->
 <section class="section section-tight">
   <div class="section-inner">

@@ -1,4 +1,37 @@
 /* ============================================================
+   Ark Tech — Projects (single source of truth)
+   ------------------------------------------------------------
+   Each project is described once. The work-grid cards, the
+   thumbnail iframes, the "Visit live site" links, and the
+   interactive preview modal all read from this array.
+
+   To add a project: append a new entry to PROJECTS. The card,
+   thumbnail preview, and modal are generated automatically.
+   ============================================================ */
+const PROJECTS = [
+  {
+    id: 'mens-fashion',
+    url: 'https://atlehang66.github.io/.com/',
+    label: 'atlehang66.github.io/.com',
+    stageNum: '01 · E-commerce storefront',
+    title: "Men's fashion storefront",
+    description:
+      "A South Africa-focused storefront with a live product catalog, size-aware cart logic, and live search/filter — built from static HTML/CSS/JS with real Supabase auth underneath.",
+    chips: ['HTML / CSS / JS', 'Supabase Auth', 'Cart & catalog'],
+  },
+  {
+    id: 'pure-living',
+    url: 'https://pure-living-4.preview.emergentagent.com/?utm_source=share',
+    label: 'pure-living-4.preview.emergentagent.com',
+    stageNum: '02 · Wellness e-commerce platform',
+    title: 'Pure Living',
+    description:
+      'A full dropshipping platform for health, beauty, and sustainable living — Node/Express and Supabase on the backend, PayFast payments, and CJ Dropshipping fulfillment wired into checkout.',
+    chips: ['Node.js / Express', 'PayFast', 'CJ Dropshipping'],
+  },
+];
+
+/* ============================================================
    Ark Tech — Hero: floating 3D logo
    ------------------------------------------------------------
    Renders the brand logo as a slow-rotating, gently floating
@@ -247,8 +280,7 @@ function buildLogoScene() {
     rafId = requestAnimationFrame(tick);
   };
   tick();
-
-
+}
 
 /* ============================================================
    Work section — thumbnail previews: scale live iframes to fill
@@ -260,49 +292,60 @@ function buildLogoScene() {
   const BASE_W = 1440;
   const viewports = document.querySelectorAll('.work-frame-viewport');
   if (!viewports.length) return;
- 
+
   function scaleFrame(viewport) {
     const iframe = viewport.querySelector('iframe');
     if (!iframe) return;
     const scale = viewport.clientWidth / BASE_W;
     iframe.style.transform = `scale(${scale})`;
   }
- 
+
   function scaleAll() {
     viewports.forEach(scaleFrame);
   }
- 
+
   scaleAll();
   window.addEventListener('resize', scaleAll);
- 
+
   if ('ResizeObserver' in window) {
     const ro = new ResizeObserver(scaleAll);
     viewports.forEach((vp) => ro.observe(vp));
   }
 })();
- 
+
 /* ============================================================
    Work section — interactive preview modal.
-   Opens a real, live, fully-clickable copy of the site scaled
-   down ("zoomed out") to fit the modal, so more of the page is
-   visible at once. Closes via Esc, backdrop click, or the ✕.
+   ------------------------------------------------------------
+   Single source of truth: PROJECTS. The navigation logic is
+   reduced to `iframe.src = project.url`. We then watch the
+   iframe for an X-Frame-Options / CSP block, and if the
+   hosting provider refuses to be embedded, we surface a
+   message + "Open Project" button instead of leaving the
+   user staring at a blank frame.
    ============================================================ */
 (function initWorkModal() {
   const modal = document.getElementById('workModal');
   if (!modal) return;
- 
+
   const body = modal.querySelector('.work-modal-body');
   const viewport = document.getElementById('workModalViewport');
   const iframe = document.getElementById('workModalIframe');
   const urlLabel = document.getElementById('workModalUrl');
   const openLink = document.getElementById('workModalOpenLink');
+  const fallback = document.getElementById('workModalFallback');
+  const fallbackOpen = document.getElementById('workModalFallbackOpen');
+  const fallbackUrl = document.getElementById('workModalFallbackUrl');
   const BASE_W = 1440;
   const BASE_H = 900;
   const BODY_PADDING = 48; // matches .work-modal-body padding (24px each side)
- 
+  // Generous: some real sites are slow but a blocked embed also stalls here.
+  const EMBED_CHECK_TIMEOUT_MS = 6000;
+
   let lastFocused = null;
   let isOpen = false;
- 
+  let currentProject = null;
+  let loadTimer = null;
+
   function sizeViewport() {
     if (!isOpen) return;
     const availW = body.clientWidth - BODY_PADDING;
@@ -313,44 +356,130 @@ function buildLogoScene() {
     viewport.style.height = `${BASE_H * scale}px`;
     iframe.style.transform = `scale(${scale})`;
   }
- 
-  function openModal(url, label) {
+
+  // If the embed never reports `load` (silent block, blank error page,
+  // or the host returned an X-Frame-Options refusal that browsers
+  // render as an empty frame), assume blocked and show the fallback.
+  function handleTimeout() {
+    if (!isOpen || !currentProject) return;
+    showFallback();
+  }
+
+  function showFallback() {
+    if (!currentProject) return;
+    fallbackUrl.textContent = currentProject.label || currentProject.url;
+    fallbackOpen.href = currentProject.url;
+    fallback.classList.add('is-visible');
+    viewport.style.display = 'none';
+  }
+
+  function hideFallback() {
+    fallback.classList.remove('is-visible');
+    viewport.style.display = '';
+  }
+
+  function handleLoad() {
+    if (!isOpen || !currentProject) return;
+    clearTimeout(loadTimer);
+
+    // Heuristic: if the iframe is same-origin accessible, the browser
+    // refused to navigate it to the remote URL (X-Frame-Options / CSP)
+    // and kept it at about:blank. A successfully framed page is
+    // cross-origin and throws on contentDocument access.
+    let blocked = false;
+    try {
+      const doc = iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document);
+      if (doc) blocked = true; // reached the document => same-origin => blocked
+    } catch (_) {
+      // cross-origin => page actually loaded
+      blocked = false;
+    }
+
+    if (blocked) {
+      showFallback();
+    } else {
+      hideFallback();
+    }
+  }
+
+  function openModal(project) {
     lastFocused = document.activeElement;
-    urlLabel.textContent = label || url;
-    openLink.href = url;
-    iframe.src = url;
+    currentProject = project;
+    urlLabel.textContent = project.label || project.url;
+    openLink.href = project.url;
+    // The navigation logic: just point the iframe at the project URL.
+    iframe.src = project.url;
     isOpen = true;
     modal.classList.add('is-open');
     modal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
     requestAnimationFrame(sizeViewport);
     modal.querySelector('.work-modal-close').focus();
+
+    // Listen once per open for either a load event or a timeout.
+    iframe.addEventListener('load', handleLoad, { once: true });
+    clearTimeout(loadTimer);
+    loadTimer = setTimeout(handleTimeout, EMBED_CHECK_TIMEOUT_MS);
   }
- 
+
   function closeModal() {
     isOpen = false;
+    currentProject = null;
+    clearTimeout(loadTimer);
     modal.classList.remove('is-open');
     modal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
     iframe.src = 'about:blank'; // stop whatever's running behind it
+    hideFallback();
     if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
   }
- 
-  document.querySelectorAll('.work-frame-link[data-work-url]').forEach((trigger) => {
+
+  /* ---- render the work grid from PROJECTS ---- */
+  const grid = document.getElementById('workGrid');
+  if (grid) {
+    const html = PROJECTS.map((p) => `
+      <article class="work-card" data-project-id="${p.id}">
+        <div class="work-frame">
+          <div class="browser-chrome">
+            <span class="chrome-dots"><i class="dot dot-r"></i><i class="dot dot-y"></i><i class="dot dot-g"></i></span>
+            <span class="browser-url">${p.label || p.url}</span>
+          </div>
+          <div class="work-frame-viewport">
+            <iframe src="${p.url}" loading="lazy" tabindex="-1" title="Live preview of ${p.title}"></iframe>
+          </div>
+          <a class="work-frame-link" href="${p.url}" data-project-id="${p.id}" aria-label="Open an interactive preview of ${p.title}"></a>
+        </div>
+        <div class="work-body">
+          <p class="stage-num">${p.stageNum || ''}</p>
+          <h3 class="h4">${p.title}</h3>
+          <p class="card-text-sm">${p.description}</p>
+          <div class="chip-row">
+            ${(p.chips || []).map((c) => `<span class="chip">${c}</span>`).join('')}
+          </div>
+          <a href="${p.url}" target="_blank" rel="noopener" class="btn btn-outline btn-sm work-link">Visit live site ↗</a>
+        </div>
+      </article>
+    `).join('');
+    grid.innerHTML = html;
+  }
+
+  /* ---- wire up the freshly rendered cards ---- */
+  document.querySelectorAll('.work-frame-link[data-project-id]').forEach((trigger) => {
     trigger.addEventListener('click', (e) => {
       e.preventDefault();
-      openModal(trigger.dataset.workUrl, trigger.dataset.workLabel);
+      const project = PROJECTS.find((p) => p.id === trigger.dataset.projectId);
+      if (project) openModal(project);
     });
   });
- 
+
   modal.querySelectorAll('[data-work-close]').forEach((el) => {
     el.addEventListener('click', closeModal);
   });
- 
+
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && isOpen) closeModal();
   });
- 
+
   window.addEventListener('resize', sizeViewport);
   if ('ResizeObserver' in window) {
     new ResizeObserver(sizeViewport).observe(body);
