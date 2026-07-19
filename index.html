@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@500;600;700;800&family=Big+Shoulders+Stencil:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="arch-tree.css">
 </head>
 <body class="antialiased">
 <div class="grain"></div>
@@ -20,16 +21,15 @@
     </a>
     <!-- <nav class="nav-links">
       <a href="#services">services</a>
-      <a href="#matrix">capabilities</a>
       <a href="#process">process</a>
-      <a href="#team">team</a>
+      <a href="#contact">contact</a>
     </nav> -->
     <!-- <a href="#contact" class="btn btn-primary btn-sm">Start a project</a> -->
   </div>
 </header>
 
 <!-- HERO -->
-<section id="top" class="hero blueprint-bg">
+<section id="top" class="hero blueprint-bg" >
   <span class="reg-mark reg-tl"></span>
   <span class="reg-mark reg-tr"></span>
   <div class="hero-inner">
@@ -52,7 +52,7 @@
   </div>
 </section>
 
-<section id="services" class="section" style="padding-top: 10px;" data-min-scale="0.8">
+<section id="services" class="section" style="padding-top: 10px;" data-min-scale="0.8" style="padding-top: 10px;" data-min-scale="0.8">
   <div class="section-inner">
     <div class="section-head">
       <div>
@@ -60,6 +60,21 @@
       </div>
     </div>
 
+      <div class="arch-stage">
+
+    <!-- Tree diagram -->
+    <div class="arch-diagram" id="archDiagram">
+
+      <!-- Root node (left column) -->
+      <div class="arch-root-col">
+        <div class="arch-node node-root" data-branch="root">
+          <div class="node-num">01 · Plan &amp; design</div>
+          <div class="node-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a4 4 0 00-5.4 5.4l-6 6a1 1 0 001.4 1.4l6-6a4 4 0 005.4-5.4l-2.1 2.1-2-2z"/></svg>
+          </div>
+          <div class="node-title">Web design</div>
+          <div class="node-text">User-focused interfaces that turn visitors into customers and keep the product clear at every step.</div>
+          <span class="node-anchor node-anchor-right"></span>
       <div class="arch-stage">
 
     <!-- Tree diagram -->
@@ -307,9 +322,20 @@
 </section>
 
 <footer class="footer">
-  <p>Ark Tech — Johannesburg, South Africa</p>
+  <div class="section-inner">
+    <div class="stack-row">
+      <span>Node.js</span>
+      <span>React</span>
+      <span>PostgreSQL</span>
+      <span>Supabase</span>
+      <span>PayFast</span>
+      <span>GitHub Actions</span>
+      <span>Java / Spring Boot</span>
+      <span>REST APIs</span>
+    </div>
+  </div>
 </footer>
-
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

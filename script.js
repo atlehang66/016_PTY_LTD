@@ -28,6 +28,7 @@ function canUse3D() {
   return !reduceMotion && typeof window.THREE === 'object' && logoMount;
 }
 
+
 function buildLogoScene() {
   if (!logoMount) return;
   const THREE = window.THREE;
@@ -52,16 +53,16 @@ function buildLogoScene() {
   renderer.setClearColor(0x000000, 0);
   logoMount.appendChild(renderer.domElement);
 
-  /* ---- lights: key + cool fill to read the logo's blue/violet tones ---- */
+  /* ---- lights: key + warm fill to read the logo's coral/amber tones ---- */
   const ambient = new THREE.AmbientLight(0xffffff, 0.6);
   scene.add(ambient);
   const key = new THREE.DirectionalLight(0xfff2d6, 0.9);
   key.position.set(2, 3, 4);
   scene.add(key);
-  const fill = new THREE.DirectionalLight(0x6fb2ff, 0.5);
+  const fill = new THREE.DirectionalLight(0xffb46f, 0.5);
   fill.position.set(-3, 1, 2);
   scene.add(fill);
-  const rim = new THREE.DirectionalLight(0x8a5cf6, 0.4);
+  const rim = new THREE.DirectionalLight(0xff6b4a, 0.4);
   rim.position.set(0, -2, -3);
   scene.add(rim);
 
@@ -70,9 +71,9 @@ function buildLogoScene() {
   haloCanvas.width = haloCanvas.height = 256;
   const hctx = haloCanvas.getContext('2d');
   const grd = hctx.createRadialGradient(128, 128, 8, 128, 128, 128);
-  grd.addColorStop(0.0, 'rgba(140, 120, 255, 0.85)');
-  grd.addColorStop(0.35, 'rgba(43, 158, 255, 0.45)');
-  grd.addColorStop(0.75, 'rgba(43, 158, 255, 0.0)');
+  grd.addColorStop(0.0, 'rgba(255, 107, 74, 0.85)');
+  grd.addColorStop(0.35, 'rgba(255, 193, 104, 0.45)');
+  grd.addColorStop(0.75, 'rgba(255, 193, 104, 0.0)');
   hctx.fillStyle = grd;
   hctx.fillRect(0, 0, 256, 256);
   const haloTex = new THREE.CanvasTexture(haloCanvas);
@@ -85,25 +86,10 @@ function buildLogoScene() {
   scene.add(halo);
 
   /* ---- logo as a textured plane ---- */
-  const loader = new THREE.TextureLoader();
-  const logoTex = loader.load(
-    'assets/logo_512.png',
-    (tex) => {
-      tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
-      tex.colorSpace = THREE.SRGBColorSpace;
-    },
-    undefined,
-    (err) => {
-      console.warn('[hero] logo texture failed:', err);
-      showFallback('texture load failed');
-    }
-  );
-  logoTex.minFilter = THREE.LinearFilter;
-
-  // Plane size roughly matches the aspect of a square logo.
-  const planeGeom = new THREE.PlaneGeometry(2.4, 2.4);
+  // Load the logo onto a canvas first so we can fix low-contrast
+  // (near-black) text before it becomes a texture.
+  const planeGeom = new THREE.PlaneGeometry(3.4, 3.4);
   const planeMat = new THREE.MeshStandardMaterial({
-    map: logoTex,
     transparent: true,
     alphaTest: 0.02,
     roughness: 0.4,
@@ -112,6 +98,42 @@ function buildLogoScene() {
   });
   const plane = new THREE.Mesh(planeGeom, planeMat);
   scene.add(plane);
+
+  const rawImg = new Image();
+  rawImg.crossOrigin = 'anonymous';
+  rawImg.onload = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = rawImg.width;
+    canvas.height = rawImg.height;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(rawImg, 0, 0);
+
+    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const d = imgData.data;
+    for (let i = 0; i < d.length; i += 4) {
+      const a = d[i + 3];
+      if (a === 0) continue;
+      const brightness = (d[i] + d[i + 1] + d[i + 2]) / 3;
+      // Near-black pixels are the wordmark text — lift them to the theme's text color.
+      if (brightness < 70) {
+        d[i] = 248; d[i + 1] = 243; d[i + 2] = 236; // var(--text)
+      }
+    }
+    ctx.putImageData(imgData, 0, 0);
+
+    const logoTex = new THREE.CanvasTexture(canvas);
+    logoTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    logoTex.colorSpace = THREE.SRGBColorSpace;
+    logoTex.minFilter = THREE.LinearFilter;
+    logoTex.needsUpdate = true;
+    planeMat.map = logoTex;
+    planeMat.needsUpdate = true;
+  };
+  rawImg.onerror = (err) => {
+    console.warn('[hero] logo texture failed:', err);
+    showFallback('texture load failed');
+  };
+  rawImg.src = 'assets/logo_512.png';
 
   // Slight tilt so it doesn't read dead-on
   plane.rotation.x = -0.05;
@@ -127,7 +149,7 @@ function buildLogoScene() {
   }
   dustGeom.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
   const dustMat = new THREE.PointsMaterial({
-    color: 0x8a5cf6, size: 0.025, transparent: true, opacity: 0.55,
+    color: 0xffb46f, size: 0.025, transparent: true, opacity: 0.55,
     blending: THREE.AdditiveBlending, depthWrite: false,
   });
   const dust = new THREE.Points(dustGeom, dustMat);
