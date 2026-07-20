@@ -1,0 +1,281 @@
+/* ============================================================
+   Ark Tech — "Software Is an Asset" dashboard section
+   ------------------------------------------------------------
+   Self-contained module. Reuses root tokens from styles.css
+   (colors, fonts, radius, shadow) — no globals are overridden.
+   ============================================================ */
+
+.asset-section { padding-top: 72px; padding-bottom: 72px; }
+
+.asset-head {
+  max-width: 640px;
+  margin: 0 auto 56px;
+  text-align: center;
+}
+.asset-headline {
+  max-width: none;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 10px;
+}
+.asset-sub {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.03em;
+  color: var(--rope);
+  text-transform: uppercase;
+}
+
+/* ---------- Grid ---------- */
+.asset-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 22px;
+}
+
+/* ---------- Card ---------- */
+.asset-card {
+  position: relative;
+  padding: 26px 24px 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.03));
+  backdrop-filter: blur(16px);
+  box-shadow: var(--shadow);
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.7s ease, transform 0.7s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+}
+.asset-card.in-view { opacity: 1; transform: translateY(0); }
+.asset-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 24px 64px -16px rgba(0, 0, 0, 0.3);
+}
+.asset-card.in-view:hover { transform: translateY(-4px); }
+
+.asset-card-top { margin-bottom: 14px; }
+.asset-label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.asset-counter {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 18px;
+  font-family: "Space Grotesk", Inter, system-ui, sans-serif;
+}
+.asset-counter-num {
+  font-size: clamp(1.8rem, 3vw, 2.2rem);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.asset-counter-unit {
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-family: var(--font-mono);
+}
+
+/* ---------- Chart canvas ---------- */
+.asset-chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 300 / 140;
+  overflow: visible;
+  margin-bottom: 14px;
+}
+
+.chart-line {
+  fill: none;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 900;
+  stroke-dashoffset: 900;
+  transition: stroke-dashoffset 1.5s cubic-bezier(0.16, 0.84, 0.44, 1);
+}
+.chart-line-decline { stroke: var(--rope); opacity: 0.85; }
+.chart-line-rise { stroke: var(--chart-accent, #2b9eff); transition-delay: 0.15s; }
+.in-view .chart-line { stroke-dashoffset: 0; }
+
+.chart-area {
+  opacity: 0;
+  transition: opacity 1.1s ease 0.9s;
+}
+.in-view .chart-area { opacity: 1; }
+
+.chart-cross {
+  fill: var(--chart-accent, #a78bfa);
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(0.2);
+  transition: opacity 0.5s ease 1.1s, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 1.1s;
+}
+.in-view .chart-cross { opacity: 1; transform: scale(1); }
+
+.chart-flat {
+  stroke: var(--rope);
+  stroke-width: 1.6;
+  stroke-dasharray: 5 6;
+  opacity: 0;
+  transition: opacity 0.7s ease 1.3s;
+}
+.in-view .chart-flat { opacity: 0.7; }
+
+/* ---------- Radial rings (card 2) ---------- */
+.asset-chart-radial {
+  aspect-ratio: 1 / 1;
+  max-width: 148px;
+  margin: 0 auto 14px;
+}
+.chart-ring-track {
+  fill: none;
+  stroke: var(--border-soft);
+  stroke-width: 9;
+}
+.chart-ring-track-inner { stroke: rgba(96, 104, 118, 0.16); }
+.chart-ring-progress {
+  fill: none;
+  stroke-width: 9;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1.4s cubic-bezier(0.16, 0.84, 0.44, 1) 0.1s;
+}
+.chart-ring-output {
+  stroke: var(--chart-accent, #a78bfa);
+  stroke-dasharray: 364.4;
+  stroke-dashoffset: 364.4;
+}
+.chart-ring-cost {
+  stroke: var(--rope);
+  stroke-dasharray: 263.9;
+  stroke-dashoffset: 263.9;
+  transition-delay: 0.3s;
+}
+.in-view .chart-ring-output { stroke-dashoffset: 43.7; }
+.in-view .chart-ring-cost { stroke-dashoffset: 163.6; }
+
+.chart-bars rect {
+  fill: var(--chart-accent, #f59e0b);
+  transform-box: fill-box;
+  transform-origin: bottom;
+  transform: scaleY(0);
+  transition: transform 0.85s cubic-bezier(0.16, 0.84, 0.44, 1);
+}
+.in-view .chart-bars rect { transform: scaleY(1); }
+.chart-bars rect:nth-child(1) { transition-delay: 0.05s; }
+.chart-bars rect:nth-child(2) { transition-delay: 0.15s; }
+.chart-bars rect:nth-child(3) { transition-delay: 0.25s; }
+.chart-bars rect:nth-child(4) { transition-delay: 0.35s; }
+.chart-bars rect:nth-child(5) { transition-delay: 0.45s; }
+
+/* Per-card accent (mirrors arch-tree's node-accent pattern) */
+.asset-card[data-accent="blue"]   { --chart-accent: #2b9eff; }
+.asset-card[data-accent="violet"] { --chart-accent: #a78bfa; }
+.asset-card[data-accent="amber"]  { --chart-accent: #f59e0b; }
+
+/* ---------- Legend ---------- */
+.asset-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.asset-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+.asset-legend i {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--dot, var(--rope));
+  flex-shrink: 0;
+}
+
+.asset-caption {
+  font-size: 0.86rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+/* ---------- Bottom badge strip ---------- */
+.asset-badges {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 40px;
+  margin-top: 48px;
+  padding-top: 40px;
+  border-top: 1px solid var(--border-soft);
+}
+.asset-badge {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.asset-badge.in-view { opacity: 1; transform: translateY(0); }
+.asset-badge:nth-child(1) { transition-delay: 0s; }
+.asset-badge:nth-child(2) { transition-delay: 0.1s; }
+.asset-badge:nth-child(3) { transition-delay: 0.2s; }
+.asset-badge-num {
+  font-family: "Space Grotesk", Inter, system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--signal);
+  font-variant-numeric: tabular-nums;
+}
+.asset-badge-unit {
+  font-family: "Space Grotesk", Inter, system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--signal);
+}
+.asset-badge-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  align-self: center;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .asset-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+}
+
+@media (max-width: 640px) {
+  .asset-section { padding-top: 48px; padding-bottom: 48px; }
+  .asset-head { margin-bottom: 36px; }
+  .asset-grid { grid-template-columns: 1fr; gap: 18px; }
+  .asset-badges { gap: 28px; margin-top: 36px; padding-top: 28px; }
+  .asset-card { padding: 22px 20px 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .asset-card,
+  .chart-line,
+  .chart-area,
+  .chart-cross,
+  .chart-flat,
+  .chart-bars rect,
+  .chart-ring-progress,
+  .asset-badge {
+    transition-duration: 0.01ms !important;
+  }
+}

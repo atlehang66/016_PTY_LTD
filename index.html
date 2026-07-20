@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@500;600;700;800&family=Big+Shoulders+Stencil:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="asset-section.css">
 </head>
 <body class="antialiased">
 <div class="grain"></div>
@@ -49,6 +50,112 @@
 
     <!-- 3D floating logo (signature element) -->
     <!-- <div id="logo-3d" class="logo-3d" aria-label="Floating 3D Ark Tech logo"></div> -->
+  </div>
+</section>
+
+ 
+<!-- ASSET / BUSINESS CASE DASHBOARD -->
+<section id="asset" class="section section-alt asset-section">
+  <div class="section-inner">
+ 
+    <div class="asset-head">
+      <h2 class="h2 asset-headline">Software is an asset. Not an expense.</h2>
+      <p class="asset-sub">Grow revenue. Not workload.</p>
+    </div>
+ 
+    <div class="asset-grid">
+ 
+      <!-- Card 1 — Time reinvestment -->
+      <div class="asset-card" data-accent="blue">
+        <div class="asset-card-top"><span class="asset-label">Time reinvested</span></div>
+        <div class="asset-counter">
+          <span class="asset-counter-num" data-counter data-target="142">0</span>
+          <span class="asset-counter-unit">hrs / month recovered</span>
+        </div>
+        <svg class="asset-chart" viewBox="0 0 300 140" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="assetAreaBlue" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#2b9eff" stop-opacity="0.32"/>
+              <stop offset="100%" stop-color="#2b9eff" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path class="chart-area" fill="url(#assetAreaBlue)"
+                d="M10,42 C60,58 120,80 170,95 C220,108 260,116 290,120 L290,140 L10,140 Z"/>
+          <path class="chart-line chart-line-decline"
+                d="M10,30 C60,48 120,72 170,92 C220,106 260,116 290,122"/>
+          <path class="chart-line chart-line-rise"
+                d="M10,120 C60,100 120,65 170,42 C220,25 260,14 290,8"/>
+        </svg>
+        <div class="asset-legend">
+          <span><i style="--dot:#606876"></i>Manual work</span>
+          <span><i style="--dot:#2b9eff"></i>Strategic work</span>
+        </div>
+        <p class="asset-caption">Automation absorbs lead follow-ups, scheduling, and routine admin — freeing hours for the work that grows the business.</p>
+      </div>
+ 
+      <!-- Card 2 — Cost vs output -->
+      <div class="asset-card" data-accent="violet">
+        <div class="asset-card-top"><span class="asset-label">Cost vs. output</span></div>
+        <div class="asset-counter">
+          <span class="asset-counter-num" data-counter data-target="38">0</span>
+          <span class="asset-counter-unit">% lower cost per task</span>
+        </div>
+        <svg class="asset-chart asset-chart-radial" viewBox="0 0 140 140" aria-hidden="true">
+          <g transform="rotate(-90 70 70)">
+            <circle class="chart-ring-track" cx="70" cy="70" r="58"/>
+            <circle class="chart-ring-track chart-ring-track-inner" cx="70" cy="70" r="42"/>
+            <circle class="chart-ring-progress chart-ring-output" cx="70" cy="70" r="58"/>
+            <circle class="chart-ring-progress chart-ring-cost" cx="70" cy="70" r="42"/>
+          </g>
+        </svg>
+        <div class="asset-legend">
+          <span><i style="--dot:#606876"></i>Operational cost</span>
+          <span><i style="--dot:#a78bfa"></i>Output</span>
+        </div>
+        <p class="asset-caption">Same team, more delivered. Systems absorb the repeat work while cost per outcome trends down.</p>
+      </div>
+ 
+      <!-- Card 3 — Scale without stress -->
+      <div class="asset-card" data-accent="amber">
+        <div class="asset-card-top"><span class="asset-label">Scale without stress</span></div>
+        <div class="asset-counter">
+          <span class="asset-counter-num" data-counter data-target="3">0</span>
+          <span class="asset-counter-unit">x workload, same team</span>
+        </div>
+        <svg class="asset-chart" viewBox="0 0 300 140" preserveAspectRatio="none" aria-hidden="true">
+          <line class="chart-flat" x1="10" y1="118" x2="290" y2="113"/>
+          <g class="chart-bars">
+            <rect x="30" y="100" width="24" height="30" rx="3"/>
+            <rect x="90" y="82" width="24" height="48" rx="3"/>
+            <rect x="150" y="60" width="24" height="70" rx="3"/>
+            <rect x="210" y="38" width="24" height="92" rx="3"/>
+            <rect x="270" y="16" width="24" height="114" rx="3"/>
+          </g>
+        </svg>
+        <div class="asset-legend">
+          <span><i style="--dot:#f59e0b"></i>Workload &amp; revenue</span>
+          <span><i style="--dot:#606876"></i>Staffing</span>
+        </div>
+        <p class="asset-caption">As demand grows, automation grows with it. Software becomes the backbone — headcount doesn't have to scale to match.</p>
+      </div>
+ 
+    </div>
+ 
+    <div class="asset-badges">
+      <div class="asset-badge">
+        <span class="asset-badge-num" data-counter data-target="99.9" data-decimals="1">0</span><span class="asset-badge-unit">%</span>
+        <span class="asset-badge-label">Process accuracy</span>
+      </div>
+      <div class="asset-badge">
+        <span class="asset-badge-num" data-counter data-target="24" data-decimals="0">0</span><span class="asset-badge-unit">/7</span>
+        <span class="asset-badge-label">Automated response</span>
+      </div>
+      <div class="asset-badge">
+        <span class="asset-badge-num" data-counter data-target="0" data-decimals="0">0</span>
+        <span class="asset-badge-label">Missed follow-ups</span>
+      </div>
+    </div>
+ 
   </div>
 </section>
 
@@ -230,9 +337,8 @@
   <div class="section-inner">
     <div class="section-head">
       <div>
-        <p class="eyebrow">AT-03 · Selected work</p>
-        <h2 class="h2">Live previews, not mockups</h2>
-        <p class="lede" style="margin-bottom:0;">Products we've designed and shipped end to end. What's below is the real site, running live.</p>
+        <h2 class="h2">Live previews</h2>
+        <p class="lede" style="margin-bottom:0;">Products we've designed and shipped end to end. <br>(click to expand)</p>
       </div>
     </div>
  
@@ -296,5 +402,6 @@
 </footer>
 
 <script src="script.js"></script>
+<script src="asset-section.js"></script>
 </body>
 </html>
