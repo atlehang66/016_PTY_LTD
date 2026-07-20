@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders:wght@500;600;700;800&family=Big+Shoulders+Stencil:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="arch-tree.css">
 </head>
 <body class="antialiased">
 <div class="grain"></div>
@@ -18,11 +19,17 @@
       <span class="logo-mark">A</span>
       Ark Tech
     </a>
+    <!-- <nav class="nav-links">
+      <a href="#services">services</a>
+      <a href="#process">process</a>
+      <a href="#contact">contact</a>
+    </nav> -->
+    <!-- <a href="#contact" class="btn btn-primary btn-sm">Start a project</a> -->
   </div>
 </header>
 
 <!-- HERO -->
-<section id="top" class="hero blueprint-bg">
+<section id="top" class="hero blueprint-bg" >
   <span class="reg-mark reg-tl"></span>
   <span class="reg-mark reg-tr"></span>
   <div class="hero-inner">
@@ -42,12 +49,14 @@
   </div>
 </section>
 
+<!-- SERVICES -->
 <section id="services" class="section" style="padding-top: 10px;" data-min-scale="0.8">
   <div class="section-inner">
     <div class="section-head">
       <div>
-        <!-- <p class="eyebrow">AT-02 · Services</p> -->
+        <p class="eyebrow">AT-02 · Services</p>
       </div>
+      <p class="section-note">No handoffs to a different team halfway through. The people who design it are the people who ship and support it.</p>
     </div>
 
       <div class="arch-stage">
@@ -120,6 +129,70 @@
           <div class="node-text">Visibility, alerts, and insight so issues are surfaced before they become costly.</div>
         </div>
       </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="arch-footer">
+      <div class="footer-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4.5 16.5L3 21l4.5-1.5L18 9a2.1 2.1 0 00-3-3L4.5 16.5z"/><path d="M15 6l3 3"/></svg>
+      </div>
+      <p class="footer-text"><strong>End-to-end by design.</strong> We align strategy, technology, and operations across the full software lifecycle.</p>
+    </div>
+
+  </div>
+
+  <script src="arch-tree.js"></script>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process" class="section process-section" data-min-scale="0.78">
+  <div class="section-inner">
+    <p class="eyebrow">AT-04 · Process</p>
+    <h2 class="h2 mb-xl">Four stages, one team, all the way through</h2>
+
+    <div class="pipeline" style="margin-top: 10%;">
+      <div class="pipeline-line"></div>
+      <div class="pipeline-grid">
+        <div class="stage">
+          <div class="stage-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3" stroke-linecap="round"/></svg>
+          </div>
+          <div class="node-title">Process automation</div>
+          <div class="node-text">Streamline workflows and remove manual friction with reliable automation.</div>
+        </div>
+
+        <div class="arch-node node-appsec" data-branch="right">
+          <span class="node-anchor node-anchor-left" style="--dot:#6ee7b7"></span>
+          <div class="node-num">03 · Secure &amp; protect</div>
+          <div class="node-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l8 4v6c0 5-3.4 8.7-8 10-4.6-1.3-8-5-8-10V6l8-4z"/></svg>
+          </div>
+          <div class="node-title">Application security</div>
+          <div class="node-text">Secure by design, with testing and hardening built into delivery.</div>
+        </div>
+
+        <div class="arch-node node-ai" data-branch="left">
+          <span class="node-anchor node-anchor-left" style="--dot:#a78bfa"></span>
+          <div class="node-num">04 · Intelligence layer</div>
+          <div class="node-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5z"/><path d="M19 15l.7 2.1L22 18l-2.3.9L19 21l-.7-2.1L16 18l2.3-.9z"/></svg>
+          </div>
+          <div class="node-title">AI agents</div>
+          <div class="node-text">Smart assistants that support your team and accelerate day-to-day operations.</div>
+        </div>
+
+        <div class="arch-node node-sysmon" data-branch="right">
+          <span class="node-anchor node-anchor-left" style="--dot:#f59e0b"></span>
+          <div class="node-num">05 · Operate &amp; optimize</div>
+          <div class="node-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M8 12h2l1.5 3L14 8l1.5 4H16"/></svg>
+          </div>
+          <div class="node-title">Systems monitoring</div>
+          <div class="node-text">Visibility, alerts, and insight so issues are surfaced before they become costly.</div>
+        </div>
+      </div>
     </div>
     <!-- Footer -->
     <div class="arch-footer">
@@ -135,138 +208,69 @@
   </div>
 </section>
 
-<!-- TEAM -->
-<section id="team" class="section section-alt">
-  <div class="section-inner">
-    <!-- <p class="eyebrow">AT-05 · Team</p> -->
-    <h2 class="h2 mb-xl">The people shipping your product</h2>
+<!-- CONTACT -->
+<section id= class="section" >
+  <div class="contact-inner">
+    <div class="eyebrow-row center"><p class="eyebrow">AT-06 · Get in touch</p></div>
+    <h2 class="h1-sm">Have something to build?</h2>
+    <p class="lede center">Tell us what you're trying to ship. We'll reply with next steps, not a sales call.</p>
 
-    <div class="team-grid">
-
-      <!-- Atlehang -->
-      <article class="team-card card-1">
-        <div class="team-top">
-          <div class="avatar">AS</div>
-          <div>
-            <h3 class="h4">Atlehang Semela</h3>
-            <p class="role-tag">Full-Stack Developer — Backend &amp; Legacy Systems</p>
-          </div>
+    <form id="contact-form" class="contact-form" novalidate>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="cf-name">Name</label>
+          <input type="text" id="cf-name" name="from_name" autocomplete="name" required>
         </div>
-        <p class="card-text-sm">Splits time between COBOL mainframe support for a major bank and full-stack Java development — comfortable moving between legacy systems and modern web stacks.</p>
-        <div class="fact-list">
-          <div class="fact"><span class="fact-k">Currently</span><span class="fact-v">Mainframe Developer, Absa Group</span></div>
-          <div class="fact"><span class="fact-k">Focus</span><span class="fact-v">COBOL, backend modernization, security</span></div>
+        <div class="form-field">
+          <label for="cf-email">Email</label>
+          <input type="email" id="cf-email" name="reply_to" autocomplete="email" required>
         </div>
-        <div class="chip-row">
-          <span class="chip">Java</span>
-          <span class="chip">Spring Boot</span>
-          <span class="chip">COBOL</span>
-          <span class="chip">REST APIs</span>
-          <span class="chip">React</span>
-        </div>
-      </article>
-
-      <!-- Kopano -->
-      <article class="team-card card-2">
-        <div class="team-top">
-          <div class="avatar">KM</div>
-          <div>
-            <h3 class="h4">Kopano Boitumelo Jr. Mohapi</h3>
-            <p class="role-tag">Business Operations &amp; Client Relations</p>
-          </div>
-        </div>
-        <p class="card-text-sm">Handles the business side of delivery — client coordination and campaign execution — backed by SAP-certified process discipline that keeps projects on track.</p>
-        <div class="fact-list">
-          <div class="fact"><span class="fact-k">Currently</span><span class="fact-v">Marketing Intern, SAP</span></div>
-          <div class="fact"><span class="fact-k">Certified</span><span class="fact-v">SAP S/4HANA Cloud, Young Professionals Program</span></div>
-        </div>
-        <div class="chip-row">
-          <span class="chip">Client Coordination</span>
-          <span class="chip">Digital Marketing</span>
-          <span class="chip">SAP S/4HANA</span>
-          <span class="chip">Stakeholder Comms</span>
-        </div>
-      </article>
-
-      <!-- Kgothatso -->
-      <article class="team-card card-3">
-        <div class="team-top">
-          <div class="avatar">KM</div>
-          <div>
-            <h3 class="h4">Kgothatso Mathabathe</h3>
-            <p class="role-tag">Application &amp; Integrations Developer</p>
-          </div>
-        </div>
-        <p class="card-text-sm">Covers the full development lifecycle — from database design to systems integration — with a security-and-governance mindset built on hands-on IT support work.</p>
-        <div class="fact-list">
-          <div class="fact"><span class="fact-k">Background</span><span class="fact-v">Network &amp; Security Technician, Akesa IT Solutions</span></div>
-          <div class="fact"><span class="fact-k">Focus</span><span class="fact-v">Integrations, IT security, systems analysis</span></div>
-        </div>
-        <div class="chip-row">
-          <span class="chip">Python</span>
-          <span class="chip">Java</span>
-          <span class="chip">Database Design</span>
-          <span class="chip">Systems Integration</span>
-          <span class="chip">IT Security</span>
-        </div>
-      </article>
-
-    </div>
-  </div>
-</section>
- 
-<!-- WORK -->
-<section id="work" class="section work-section" data-min-scale="0.85">
-  <div class="section-inner">
-    <div class="section-head">
-      <div>
-         <h2 class="h2">Live previews, not mockups</h2>
-        <p class="lede" style="margin-bottom:0;">Products we've designed and shipped end to end. What's below is the real site, running live.</p>
       </div>
-    </div>
- 
-    <div class="work-grid" id="workGrid">
-      <!-- Cards are rendered by script.js from the PROJECTS array. -->
-    </div>
+
+      <div class="form-field">
+        <label for="cf-company">Company <span class="optional">(optional)</span></label>
+        <input type="text" id="cf-company" name="company" autocomplete="organization">
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label for="cf-date">Consultation date <span class="optional">(required)</span></label>
+          <input type="date" id="cf-date" name="consultation_date" required>
+        </div>
+        <div class="form-field">
+          <label for="cf-time">Preferred time (CAT) <span class="optional">(required)</span></label>
+          <select id="cf-time" name="consultation_time" required>
+            <option value="">Select a time</option>
+            <option value="09:00 CAT">09:00 CAT</option>
+            <option value="10:00 CAT">10:00 CAT</option>
+            <option value="11:00 CAT">11:00 CAT</option>
+            <option value="12:00 CAT">12:00 CAT</option>
+            <option value="13:00 CAT">13:00 CAT</option>
+            <option value="14:00 CAT">14:00 CAT</option>
+            <option value="15:00 CAT">15:00 CAT</option>
+            <option value="16:00 CAT">16:00 CAT</option>
+            <option value="17:00 CAT">17:00 CAT</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label for="cf-vision">What can we do to help you?</label>
+        <textarea id="cf-vision" name="message" rows="5" required placeholder="Tell us about the product, the problem it solves, and where you're stuck."></textarea>
+      </div>
+
+      <div class="form-footer">
+        <button type="submit" class="btn btn-primary btn-lg" id="cf-submit">Send it over</button>
+        <p class="form-status" id="cf-status" role="status" aria-live="polite"></p>
+      </div>
+    </form>
+
+    <p class="form-fallback">Prefer email? Write to <a href="mailto:hello@yourdomain.com">hello@yourdomain.com</a> directly.</p>
   </div>
 </section>
 
-<!-- WORK preview modal — populated by script.js.
-     Skeleton only; the interactive preview lives in the iframe,
-     and the fallback panel is shown if the host blocks embedding. -->
-<div id="workModal" class="work-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Project preview">
-  <div class="work-modal-backdrop" data-work-close></div>
-  <div class="work-modal-window">
-    <div class="browser-chrome work-modal-chrome">
-      <span class="chrome-dots"><i class="dot dot-r"></i><i class="dot dot-y"></i><i class="dot dot-g"></i></span>
-      <span class="browser-url" id="workModalUrl"></span>
-      <div class="work-modal-actions">
-        <a id="workModalOpenLink" class="work-modal-open" href="#" target="_blank" rel="noopener">Open in new tab ↗</a>
-        <button class="work-modal-close" type="button" data-work-close aria-label="Close preview">✕</button>
-      </div>
-    </div>
-    <div class="work-modal-body">
-      <div id="workModalViewport" class="work-modal-viewport">
-        <iframe id="workModalIframe" src="about:blank" loading="lazy" tabindex="-1" title="Project preview"></iframe>
-      </div>
-      <div id="workModalFallback" class="work-modal-fallback" role="status" aria-live="polite">
-        <div class="work-modal-fallback-icon" aria-hidden="true">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.86l-8.18 14.17A2 2 0 003.84 21h16.32a2 2 0 001.72-2.97L13.7 3.86a2 2 0 00-3.4 0z"/></svg>
-        </div>
-        <p class="work-modal-fallback-msg">
-          This project cannot be previewed because the hosting provider blocks embedding. You can still open it in a new tab.
-          <span class="work-modal-fallback-url" id="workModalFallbackUrl"></span>
-        </p>
-        <a id="workModalFallbackOpen" class="btn btn-primary btn-sm" href="#" target="_blank" rel="noopener">Open Project</a>
-      </div>
-    </div>
-    <p class="work-modal-hint">Click and scroll inside the preview to interact with the live site. Press <kbd>Esc</kbd> to close.</p>
-  </div>
-</div>
-<!-- STACK -->
-<section class="section section-tight">
+<footer class="footer">
   <div class="section-inner">
-    <div class="eyebrow-row center"><p class="eyebrow">Tools we reach for</p></div>
     <div class="stack-row">
       <span>Node.js</span>
       <span>React</span>
@@ -278,12 +282,8 @@
       <span>REST APIs</span>
     </div>
   </div>
-</section>
-
-<footer class="footer">
-  <p>Ark Tech — Johannesburg, South Africa</p>
 </footer>
-
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

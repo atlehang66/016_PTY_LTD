@@ -1,0 +1,235 @@
+/* ============================================================
+   Ark Tech — Architecture Tree Diagram (left-to-right)
+   Drop-in stylesheet. No build step required.
+   ============================================================ */
+
+:root {
+  --bg: #08111f;
+  --bg-2: #0d1728;
+  --surface: rgba(255, 255, 255, 0.06);
+  --surface-strong: rgba(255, 255, 255, 0.09);
+  --border: rgba(255, 255, 255, 0.12);
+  --border-soft: rgba(255, 255, 255, 0.08);
+  --text: #f6efe7;
+  --muted: #95a2bf;
+  --accent: #5b8dff;
+  --accent-2: #7b61ff;
+  --accent-3: #2b9eff;
+  --ok: #6ee7b7;
+  --grad: linear-gradient(135deg, var(--accent), var(--accent-2));
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 8px;
+  --shadow: 0 22px 70px -24px rgba(0, 0, 0, 0.55);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--text);
+  line-height: 1.6;
+  background:
+    radial-gradient(circle at 15% 0%, rgba(91, 141, 255, 0.22), transparent 28%),
+    radial-gradient(circle at 85% 12%, rgba(123, 97, 255, 0.16), transparent 24%),
+    linear-gradient(180deg, var(--bg), var(--bg-2));
+  min-height: 100vh;
+}
+
+/* ---------- Stage wrapper ---------- */
+.arch-stage {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 10px 24px 56px;
+}
+
+/* ---------- Diagram grid ---------- */
+.arch-diagram {
+  position: relative;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 0 72px;
+  align-items: center;
+}
+
+/* ---------- SVG connector overlay ---------- */
+.arch-connectors {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 0;
+}
+.arch-connectors path {
+  fill: none;
+  stroke: url(#lineGrad);
+  stroke-width: 1.5;
+}
+
+/* ---------- Root column ---------- */
+.arch-root-col {
+  display: flex;
+  justify-content: center;
+  z-index: 1;
+}
+
+/* ---------- Branches column ---------- */
+.arch-branches-col {
+  display: grid;
+  grid-template-rows: repeat(4, auto);
+  gap: 14px;
+  z-index: 1;
+}
+
+/* ---------- Shared node card ---------- */
+.arch-node {
+  position: relative;
+  padding: 18px 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.03));
+  backdrop-filter: blur(16px);
+  box-shadow: var(--shadow);
+  transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+}
+
+/* ---------- Root node ---------- */
+.node-root {
+  width: 220px;
+  border-color: rgba(91, 141, 255, 0.4);
+  background: linear-gradient(135deg, rgba(91, 141, 255, 0.13), rgba(43, 158, 255, 0.04));
+  box-shadow: 0 0 0 1px rgba(91, 141, 255, 0.08), 0 24px 60px -16px rgba(91, 141, 255, 0.22);
+  padding: 26px 22px;
+}
+.node-root:hover {
+  transform: translateY(-3px);
+  border-color: rgba(91, 141, 255, 0.65);
+  box-shadow: 0 0 0 1px rgba(91, 141, 255, 0.15), 0 28px 70px -16px rgba(91, 141, 255, 0.32);
+}
+
+/* ---------- Branch nodes ---------- */
+.arch-branches-col .arch-node {
+  overflow: hidden;
+}
+.arch-branches-col .arch-node::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--node-accent, #2b9eff), transparent 70%);
+  opacity: 0.7;
+}
+.arch-branches-col .arch-node:hover {
+  transform: translateX(5px);
+  border-color: rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.045));
+  box-shadow: 0 20px 56px -16px rgba(0, 0, 0, 0.55);
+}
+
+/* Per-branch accent overrides */
+.node-process { --node-accent: #2b9eff; }
+.node-appsec  { --node-accent: #6ee7b7; }
+.node-ai      { --node-accent: #a78bfa; }
+.node-sysmon  { --node-accent: #f59e0b; }
+
+.node-process .node-icon { color: #2b9eff; }
+.node-appsec  .node-icon { color: #6ee7b7; }
+.node-ai      .node-icon { color: #a78bfa; }
+.node-sysmon  .node-icon { color: #f59e0b; }
+
+/* ---------- Anchor dots (where connectors meet the card) ---------- */
+.node-anchor {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  z-index: 2;
+}
+.node-anchor-right {
+  right: -6px;
+  background: var(--accent);
+  box-shadow: 0 0 12px rgba(91, 141, 255, 0.9);
+}
+.node-anchor-left {
+  left: -6px;
+  background: var(--dot, #2b9eff);
+  box-shadow: 0 0 10px var(--dot, rgba(43, 158, 255, 0.7));
+}
+
+/* ---------- Node content ---------- */
+.node-num {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 9px;
+}
+.node-icon {
+  margin-bottom: 9px;
+  line-height: 0;
+  color: var(--accent-3);
+}
+.node-title {
+  font-family: "Space Grotesk", Inter, sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: 5px;
+  line-height: 1.2;
+}
+.node-text {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+/* ---------- Footer ---------- */
+.arch-footer {
+  margin-top: 36px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border-soft);
+}
+.footer-icon {
+  color: var(--accent-3);
+  flex-shrink: 0;
+  line-height: 0;
+}
+.footer-text {
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.65;
+}
+.footer-text strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 760px) {
+  .arch-diagram {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .arch-root-col {
+    justify-content: flex-start;
+  }
+  .arch-connectors { display: none; }
+  .node-anchor-left { display: none; }
+  .node-anchor-right { display: none; }
+  .arch-branches-col { gap: 12px; }
+}
+
+@media (max-width: 480px) {
+  .arch-stage { padding: 56px 16px 40px; }
+  .node-root { width: 100%; }
+  .arch-footer { flex-direction: column; align-items: flex-start; gap: 8px; }
+}
