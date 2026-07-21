@@ -292,174 +292,166 @@ function buildLogoScene() {
 })();
 
 /* ============================================================
-   Work section — interactive preview modal.
+   Work section — live-preview showcase.
    ------------------------------------------------------------
-   Single source of truth: PROJECTS. The navigation logic is
-   reduced to `iframe.src = project.url`. We then watch the
-   iframe for an X-Frame-Options / CSP block, and if the
-   hosting provider refuses to be embedded, we surface a
-   message + "Open Project" button instead of leaving the
-   user staring at a blank frame.
+   Single source of truth: PROJECTS. Each project renders as one
+   fully-clickable "floating browser window" card. Cards sit in
+   a fanned stack; only the front card is interactive. Left/right
+   arrows (or arrow keys) shuffle a new project to the front.
+   Handles: fit-to-width scaling, stack positioning, arrow nav,
+   scroll reveal, and a light scroll-parallax on the framed page.
    ============================================================ */
-(function initWorkModal() {
-  const modal = document.getElementById('workModal');
-  if (!modal) return;
-
-  const body = modal.querySelector('.work-modal-body');
-  const viewport = document.getElementById('workModalViewport');
-  const iframe = document.getElementById('workModalIframe');
-  const urlLabel = document.getElementById('workModalUrl');
-  const openLink = document.getElementById('workModalOpenLink');
-  const fallback = document.getElementById('workModalFallback');
-  const fallbackOpen = document.getElementById('workModalFallbackOpen');
-  const fallbackUrl = document.getElementById('workModalFallbackUrl');
-  const BASE_W = 1440;
-  const BASE_H = 900;
-  const BODY_PADDING = 48; // matches .work-modal-body padding (24px each side)
-  // Generous: some real sites are slow but a blocked embed also stalls here.
-  const EMBED_CHECK_TIMEOUT_MS = 6000;
-
-  let lastFocused = null;
-  let isOpen = false;
-  let currentProject = null;
-  let loadTimer = null;
-
-  function sizeViewport() {
-    if (!isOpen) return;
-    const availW = body.clientWidth - BODY_PADDING;
-    const availH = body.clientHeight - BODY_PADDING;
-    // Zoom out only — never scale a small site up past 100%.
-    const scale = Math.min(availW / BASE_W, availH / BASE_H, 1);
-    viewport.style.width = `${BASE_W * scale}px`;
-    viewport.style.height = `${BASE_H * scale}px`;
-    iframe.style.transform = `scale(${scale})`;
-  }
-
-  // If the embed never reports `load` (silent block, blank error page,
-  // or the host returned an X-Frame-Options refusal that browsers
-  // render as an empty frame), assume blocked and show the fallback.
-  function handleTimeout() {
-    if (!isOpen || !currentProject) return;
-    showFallback();
-  }
-
-  function showFallback() {
-    if (!currentProject) return;
-    fallbackUrl.textContent = currentProject.label || currentProject.url;
-    fallbackOpen.href = currentProject.url;
-    fallback.classList.add('is-visible');
-    viewport.style.display = 'none';
-  }
-
-  function hideFallback() {
-    fallback.classList.remove('is-visible');
-    viewport.style.display = '';
-  }
-
-  function handleLoad() {
-    if (!isOpen || !currentProject) return;
-    clearTimeout(loadTimer);
-
-    // Heuristic: if the iframe is same-origin accessible, the browser
-    // refused to navigate it to the remote URL (X-Frame-Options / CSP)
-    // and kept it at about:blank. A successfully framed page is
-    // cross-origin and throws on contentDocument access.
-    let blocked = false;
-    try {
-      const doc = iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document);
-      if (doc) blocked = true; // reached the document => same-origin => blocked
-    } catch (_) {
-      // cross-origin => page actually loaded
-      blocked = false;
-    }
-
-    if (blocked) {
-      showFallback();
-    } else {
-      hideFallback();
-    }
-  }
-
-  function openModal(project) {
-    lastFocused = document.activeElement;
-    currentProject = project;
-    urlLabel.textContent = project.label || project.url;
-    openLink.href = project.url;
-    // The navigation logic: just point the iframe at the project URL.
-    iframe.src = project.url;
-    isOpen = true;
-    modal.classList.add('is-open');
-    modal.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-    requestAnimationFrame(sizeViewport);
-    modal.querySelector('.work-modal-close').focus();
-
-    // Listen once per open for either a load event or a timeout.
-    iframe.addEventListener('load', handleLoad, { once: true });
-    clearTimeout(loadTimer);
-    loadTimer = setTimeout(handleTimeout, EMBED_CHECK_TIMEOUT_MS);
-  }
-
-  function closeModal() {
-    isOpen = false;
-    currentProject = null;
-    clearTimeout(loadTimer);
-    modal.classList.remove('is-open');
-    modal.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
-    iframe.src = 'about:blank'; // stop whatever's running behind it
-    hideFallback();
-    if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
-  }
-
-  /* ---- render the work grid from PROJECTS ---- */
+(function initWorkShowcase() {
   const grid = document.getElementById('workGrid');
-  if (grid) {
-    const html = PROJECTS.map((p) => `
-      <article class="work-card" data-project-id="${p.id}">
-        <div class="work-frame">
-          <div class="browser-chrome">
-            <span class="chrome-dots"><i class="dot dot-r"></i><i class="dot dot-y"></i><i class="dot dot-g"></i></span>
-            <span class="browser-url">${p.label || p.url}</span>
-          </div>
-          <div class="work-frame-viewport">
-            <iframe src="${p.url}" loading="lazy" tabindex="-1" title="Live preview of ${p.title}"></iframe>
-          </div>
-          <a class="work-frame-link" href="${p.url}" data-project-id="${p.id}" aria-label="Open an interactive preview of ${p.title}"></a>
+  const showcase = document.getElementById('workShowcase');
+  if (!grid || !showcase) return;
+ 
+  const BASE_W = 1440;
+  const MAX_DEPTH = 3; // deepest visible stack layer (0 = front)
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ 
+  /* ---- render the cards from PROJECTS ---- */
+  const html = PROJECTS.map((p) => `
+    <a class="work-card" href="${p.url}" target="_blank" rel="noopener" data-project-id="${p.id}" aria-label="Open live site: ${p.title}">
+      <div class="work-frame">
+        <div class="browser-chrome">
+          <span class="chrome-dots"><i class="dot dot-r"></i><i class="dot dot-y"></i><i class="dot dot-g"></i></span>
+          <span class="browser-url">${p.label || p.url}</span>
         </div>
-        <div class="work-body">
-          <p class="stage-num">${p.stageNum || ''}</p>
-          <h3 class="h4">${p.title}</h3>
-          <p class="card-text-sm">${p.description}</p>
-          <div class="chip-row">
-            ${(p.chips || []).map((c) => `<span class="chip">${c}</span>`).join('')}
-          </div>
-          <a href="${p.url}" target="_blank" rel="noopener" class="btn btn-outline btn-sm work-link">Visit live site ↗</a>
+        <div class="work-frame-viewport">
+          <iframe src="${p.url}" loading="lazy" tabindex="-1" title="Live preview of ${p.title}"></iframe>
+          <span class="work-frame-fade" aria-hidden="true"></span>
         </div>
-      </article>
-    `).join('');
-    grid.innerHTML = html;
-  }
-
-  /* ---- wire up the freshly rendered cards ---- */
-  document.querySelectorAll('.work-frame-link[data-project-id]').forEach((trigger) => {
-    trigger.addEventListener('click', (e) => {
-      e.preventDefault();
-      const project = PROJECTS.find((p) => p.id === trigger.dataset.projectId);
-      if (project) openModal(project);
+      </div>
+      <div class="work-body">
+        <p class="work-stage">${p.stageNum || ''}</p>
+        <h3 class="work-title">${p.title}</h3>
+        <p class="work-desc">${p.description}</p>
+        <div class="chip-row">
+          ${(p.chips || []).map((c) => `<span class="chip">${c}</span>`).join('')}
+        </div>
+      </div>
+    </a>
+  `).join('');
+  grid.innerHTML = html;
+ 
+  const cards = Array.from(grid.querySelectorAll('.work-card'));
+  const viewports = grid.querySelectorAll('.work-frame-viewport');
+  const total = cards.length;
+  if (!total) return;
+ 
+  const prevBtn = document.getElementById('workPrev');
+  const nextBtn = document.getElementById('workNext');
+  const currentLabel = document.getElementById('workNavCurrent');
+  const totalLabel = document.getElementById('workNavTotal');
+  if (totalLabel) totalLabel.textContent = String(total).padStart(2, '0');
+ 
+  let currentIndex = 0;
+ 
+  /* ---- stack positioning: index-distance from the front card ---- */
+  function render() {
+    cards.forEach((card, i) => {
+      const pos = (i - currentIndex + total) % total;
+      const depth = Math.min(pos, MAX_DEPTH);
+      card.dataset.stackPos = String(depth);
+      card.style.zIndex = String(total - depth);
+      card.setAttribute('tabindex', pos === 0 ? '0' : '-1');
+      card.setAttribute('aria-hidden', pos === 0 ? 'false' : 'true');
     });
+    if (currentLabel) currentLabel.textContent = String(currentIndex + 1).padStart(2, '0');
+    if (prevBtn) prevBtn.disabled = total <= 1;
+    if (nextBtn) nextBtn.disabled = total <= 1;
+    updateStackHeight();
+  }
+ 
+  function updateStackHeight() {
+    const front = cards.find((c) => c.dataset.stackPos === '0');
+    if (!front) return;
+    requestAnimationFrame(() => {
+      grid.style.height = front.offsetHeight + 'px';
+    });
+  }
+ 
+  function next() {
+    currentIndex = (currentIndex + 1) % total;
+    render();
+  }
+  function prev() {
+    currentIndex = (currentIndex - 1 + total) % total;
+    render();
+  }
+ 
+  if (nextBtn) nextBtn.addEventListener('click', next);
+  if (prevBtn) prevBtn.addEventListener('click', prev);
+ 
+  showcase.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
   });
-
-  modal.querySelectorAll('[data-work-close]').forEach((el) => {
-    el.addEventListener('click', closeModal);
-  });
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && isOpen) closeModal();
-  });
-
-  window.addEventListener('resize', sizeViewport);
+ 
+  render();
+ 
+  /* ---- fit-to-width scaling: keeps the live page filling the frame ---- */
+  function scaleFrame(viewport) {
+    const iframe = viewport.querySelector('iframe');
+    if (!iframe) return;
+    const scale = viewport.clientWidth / BASE_W;
+    iframe.style.setProperty('--fit-scale', scale);
+  }
+  function scaleAll() {
+    viewports.forEach(scaleFrame);
+    updateStackHeight();
+  }
+  scaleAll();
+  window.addEventListener('resize', scaleAll);
   if ('ResizeObserver' in window) {
-    new ResizeObserver(sizeViewport).observe(body);
+    const ro = new ResizeObserver(scaleAll);
+    viewports.forEach((vp) => ro.observe(vp));
+  }
+ 
+  /* ---- scroll reveal for the whole showcase ---- */
+  if (reduceMotion || !('IntersectionObserver' in window)) {
+    showcase.classList.add('in-view');
+  } else {
+    const revealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          showcase.classList.add('in-view');
+          revealObserver.unobserve(showcase);
+        });
+      },
+      { threshold: 0.2, rootMargin: '0px 0px -60px 0px' }
+    );
+    revealObserver.observe(showcase);
+  }
+ 
+  /* ---- gentle parallax on the framed page as the section scrolls ---- */
+  if (!reduceMotion) {
+    let ticking = false;
+    function updateParallax() {
+      const vh = window.innerHeight;
+      viewports.forEach((vp) => {
+        const rect = vp.getBoundingClientRect();
+        const center = rect.top + rect.height / 2;
+        const offset = (center - vh / 2) / vh;
+        const px = Math.max(-14, Math.min(14, offset * 22));
+        const iframe = vp.querySelector('iframe');
+        if (iframe) iframe.style.setProperty('--parallax-y', px.toFixed(1) + 'px');
+      });
+      ticking = false;
+    }
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          requestAnimationFrame(updateParallax);
+          ticking = true;
+        }
+      },
+      { passive: true }
+    );
+    updateParallax();
   }
 })();
+ 

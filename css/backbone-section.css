@@ -1,0 +1,221 @@
+/* ============================================================
+   Ark Tech — "Digital backbone" second hero section
+   ------------------------------------------------------------
+   Self-contained module. Reuses root tokens from styles.css.
+   ============================================================ */
+
+.backbone-section { padding-top: 96px; padding-bottom: 96px; }
+
+.backbone-inner {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 64px;
+  align-items: center;
+}
+
+/* ---------- Copy column ---------- */
+.backbone-headline {
+  opacity: 0;
+  transform: translateY(22px);
+  animation: none; /* override the global .h1 heroReveal keyframe — this headline is scroll-triggered instead */
+  transition: opacity 0.85s ease, transform 0.85s ease;
+}
+.backbone-section.in-view .backbone-headline {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.backbone-lede {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.8s ease 0.12s, transform 0.8s ease 0.12s;
+}
+.backbone-section.in-view .backbone-lede {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.backbone-cta-wrap {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.8s ease 0.24s, transform 0.8s ease 0.24s;
+}
+.backbone-section.in-view .backbone-cta-wrap {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.backbone-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.backbone-cta .cta-arrow {
+  display: inline-block;
+  transition: transform 0.25s ease;
+}
+.backbone-cta:hover .cta-arrow { transform: translateX(5px); }
+
+/* ---------- Visual column ---------- */
+.backbone-visual {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  max-width: 460px;
+  margin: 0 auto;
+}
+
+.backbone-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(46px);
+  opacity: 0.22;
+  pointer-events: none;
+  animation: backboneGlowPulse 7s ease-in-out infinite;
+}
+.backbone-glow-a {
+  width: 55%; height: 55%;
+  left: -6%; bottom: 4%;
+  background: #2b9eff;
+}
+.backbone-glow-b {
+  width: 50%; height: 50%;
+  right: -8%; top: -2%;
+  background: #f59e0b;
+  animation-delay: -3.4s;
+}
+@keyframes backboneGlowPulse {
+  0%, 100% { opacity: 0.16; transform: scale(1); }
+  50% { opacity: 0.28; transform: scale(1.08); }
+}
+
+.backbone-svg {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.backbone-spine {
+  fill: none;
+  stroke: url(#backboneSpineGrad);
+  stroke-width: 0.55;
+  stroke-linecap: round;
+  stroke-dasharray: 210;
+  stroke-dashoffset: 210;
+  transition: stroke-dashoffset 1.9s cubic-bezier(0.16, 0.84, 0.44, 1) 0.1s;
+}
+.backbone-section.in-view .backbone-spine { stroke-dashoffset: 0; }
+
+.backbone-origin {
+  fill: var(--rope);
+  opacity: 0;
+  transition: opacity 0.6s ease 0.2s;
+}
+.backbone-section.in-view .backbone-origin { opacity: 0.8; }
+
+.backbone-node {
+  fill: var(--node-color, #2b9eff);
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(0.3);
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.backbone-section.in-view .backbone-node { opacity: 1; transform: scale(1); }
+.backbone-node:nth-of-type(1) { transition-delay: 0.55s; }
+.backbone-node:nth-of-type(2) { transition-delay: 0.85s; }
+.backbone-node:nth-of-type(3) { transition-delay: 1.15s; }
+.backbone-node:nth-of-type(4) { transition-delay: 1.45s; }
+
+.backbone-pulse-dot {
+  fill: #ffffff;
+  opacity: 0;
+  transition: opacity 0.6s ease 1.6s;
+}
+.backbone-section.in-view .backbone-pulse-dot { opacity: 0.9; }
+
+/* ---------- Floating glass chips ---------- */
+.backbone-chip {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px 7px 7px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text);
+  white-space: nowrap;
+  z-index: 2;
+  opacity: 0;
+  transform: translateY(-50%) translateY(10px);
+  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.16, 0.84, 0.44, 1);
+  animation: backboneChipFloat 5s ease-in-out infinite;
+  animation-play-state: paused;
+}
+.backbone-section.in-view .backbone-chip {
+  opacity: 1;
+  transform: translateY(-50%) translateY(0);
+  animation-play-state: running;
+}
+.backbone-chip.chip-left { padding: 7px 7px 7px 14px; flex-direction: row-reverse; }
+
+.backbone-chip:nth-of-type(1) { transition-delay: 0.65s; animation-delay: 0s; }
+.backbone-chip:nth-of-type(2) { transition-delay: 0.95s; animation-delay: -1.3s; }
+.backbone-chip:nth-of-type(3) { transition-delay: 1.25s; animation-delay: -2.6s; }
+.backbone-chip:nth-of-type(4) { transition-delay: 1.55s; animation-delay: -3.9s; }
+
+@keyframes backboneChipFloat {
+  0%, 100% { transform: translateY(-50%) translateY(0); }
+  50% { transform: translateY(-50%) translateY(-7px); }
+}
+
+.backbone-chip-icon {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: color-mix(in srgb, var(--chip-color, #2b9eff) 16%, transparent);
+  color: var(--chip-color, #2b9eff);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .backbone-inner {
+    grid-template-columns: 1fr;
+    gap: 44px;
+    text-align: left;
+  }
+  .backbone-visual { max-width: 380px; order: 2; }
+  .backbone-copy { order: 1; }
+}
+
+@media (max-width: 640px) {
+  .backbone-section { padding-top: 64px; padding-bottom: 64px; }
+  .backbone-visual { max-width: 300px; }
+  .backbone-chip { font-size: 0.66rem; padding: 6px 12px 6px 6px; }
+  .backbone-chip.chip-left { padding: 6px 6px 6px 12px; }
+  .backbone-chip-icon { width: 20px; height: 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backbone-headline,
+  .backbone-lede,
+  .backbone-cta-wrap,
+  .backbone-spine,
+  .backbone-origin,
+  .backbone-node,
+  .backbone-pulse-dot,
+  .backbone-chip {
+    transition-duration: 0.01ms !important;
+    animation: none !important;
+  }
+}
